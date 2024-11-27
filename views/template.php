@@ -11,11 +11,20 @@ $path = TemplateController::path();
 
 // Capturar rutas de la URL limpiando las queries
 $routesArray = explode("/", $_SERVER["REQUEST_URI"]);
-array_shift($routesArray);
+array_shift($routesArray); // Quita la raíz ("/")
+
+// Si 'lavanderia' está en la primera posición, elimínalo
+if (!empty($routesArray[0]) && $routesArray[0] === "lavanderia") {
+    array_shift($routesArray);
+}
+
+// Limpia las queries restantes
 foreach ($routesArray as $key => $value) {
     $routesArray[$key] = explode("?", $value)[0];
 }
 
+
+print_r($routesArray);
 // Incluye la cabecera
 include "modules/head.php";
 

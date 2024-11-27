@@ -60,12 +60,12 @@
 
 			<!--! ============================ 				Prendas 		============================== !-->
 			<li class="menu-item">
-				<a href="#menuExtendedui" data-bs-toggle="collapse" class="menu-link waves-effect">
+				<a href="#menuExtendedui2" data-bs-toggle="collapse" class="menu-link waves-effect">
 					<span class="menu-icon"><i data-lucide="shopping-bag"></i></span>
 					<span class="menu-text"> Prendas </span>
 					<span class="menu-arrow"></span>
 				</a>
-				<div class="collapse" id="menuExtendedui">
+				<div class="collapse" id="menuExtendedui2">
 					<ul class="sub-menu">
 						<li class="menu-item">
 							<a href="/prendas" class="menu-link">
@@ -98,7 +98,7 @@
 						</li>
 						<li class="menu-item">
 							<a href="/listCompra" class="menu-link">
-								<span class="menu-text">Nueva compra</span>
+								<span class="menu-text">Lista de compras</span>
 							</a>
 						</li>
 						<li class="menu-item">
