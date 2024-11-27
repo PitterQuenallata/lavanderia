@@ -7,14 +7,14 @@
 			<div class="logo-box">
 				<!-- Brand Logo Light -->
 				<a href="index.html" class="logo-light">
-					<img src="<?php echo $path ?>views/assets/images/logo-light.png" alt="logo" class="logo-lg" height="32">
-					<img src="<?php echo $path ?>views/assets/images/logo-light-sm.png" alt="small logo" class="logo-sm" height="32">
+					<img src="views/assets/images/logo-light.png" alt="logo" class="logo-lg" height="32">
+					<img src="views/assets/images/logo-light-sm.png" alt="small logo" class="logo-sm" height="32">
 				</a>
 
 				<!-- Brand Logo Dark -->
 				<a href="index.html" class="logo-dark">
-					<img src="<?php echo $path ?>views/assets/images/logo-dark.png" alt="dark logo" class="logo-lg" height="32">
-					<img src="<?php echo $path ?>views/assets/images/logo-dark-sm.png" alt="small logo" class="logo-sm" height="32">
+					<img src="views/assets/images/logo-dark.png" alt="dark logo" class="logo-lg" height="32">
+					<img src="views/assets/images/logo-dark-sm.png" alt="small logo" class="logo-sm" height="32">
 				</a>
 			</div>
 
@@ -44,7 +44,7 @@
 			<li class="dropdown">
 				<a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
 					href="#" role="button" aria-haspopup="false" aria-expanded="false">
-					<img src="<?php echo $path ?>views/assets/images/users/avatar-3.jpg" alt="user-image" class="rounded-circle">
+					<img src="views/assets/images/users/avatar-3.jpg" alt="user-image" class="rounded-circle">
 					<span class="ms-1 d-none d-md-inline-block">
 						Madhly <i class="mdi mdi-chevron-down"></i>
 					</span>

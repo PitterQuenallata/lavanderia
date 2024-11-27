@@ -55,7 +55,7 @@
               <tr>
                   <th class="text-center" scope="row">' . ($key + 1) . '</th>
                   <td class="text-center" scope="row">
-                      <img class="img-fluid avatar-xs rounded-circle" src="' . $path . $value["foto_usuario"] . '" alt="">
+                      <img class="img-fluid avatar-xs rounded-circle" src="views/assets/'. $value["foto_usuario"] . '" alt="">
                   </td>
                   <td>' . mb_strtoupper($value["nombre_usuario"] . " " . $value["apellido_paterno_usuario"] . " " . $value["apellido_materno_usuario"], 'UTF-8') . '</td>
                   <td>' . $value["user_usuario"] . '</td>

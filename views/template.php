@@ -1,91 +1,67 @@
 <?php
+
 // Iniciar buffering y sesiones
 ob_start();
 session_start();
 
+// Lista de páginas válidas
+$validPages = [
+    "inicio",
+    "usuarios",
+    "proveedores",
+    "productos",
+    "cat-productos",
+    "dashboard",
+    "salir"
+];
 
-
-
-//ruta
-$path = TemplateController::path();
-
-// Capturar rutas de la URL limpiando las queries
-$routesArray = explode("/", $_SERVER["REQUEST_URI"]);
-array_shift($routesArray); // Quita la raíz ("/")
-
-// Si 'lavanderia' está en la primera posición, elimínalo
-if (!empty($routesArray[0]) && $routesArray[0] === "lavanderia") {
-    array_shift($routesArray);
+// Obtener la página solicitada
+$requestUri = trim($_SERVER['REQUEST_URI'], '/');
+$basePath = "lavanderia";
+if (strpos($requestUri, $basePath) === 0) {
+    $requestUri = substr($requestUri, strlen($basePath));
 }
+$segments = explode('/', $requestUri);
+$route = !empty($segments[0]) ? $segments[0] : "inicio";
 
-// Limpia las queries restantes
-foreach ($routesArray as $key => $value) {
-    $routesArray[$key] = explode("?", $value)[0];
-}
-
-
-print_r($routesArray);
 // Incluye la cabecera
 include "modules/head.php";
 
 // Página contenedora
-echo '<input type="hidden" id="urlPath" value="' . $path . '">';
+echo '<input type="hidden" id="urlPath" value="/lavanderia/">';
 
-// Modificar la función para cargar directamente desde `pages`
-function loadPage($route, $path, $routesArray)
+// Función para cargar la página solicitada
+function loadPage($route, $validPages)
 {
-    // Contenedor principal Begin page 
+    // Contenedor principal Begin page
     echo '<div class="layout-wrapper">';
 
+    // Incluye la barra lateral
     include "modules/sidebar.php";
 
+    // Contenedor de contenido
     echo '<div class="page-content">';
 
+    // Incluye la cabecera
     include "modules/header.php";
 
-
-    // Incluye la página solicitada
-    include("pages/{$route}.php");
-    // cierra el contenedor de la página
-    echo '</div>';
-    // Cierra el contenedor principal
-    echo '</div>';
-}
-
-//echo var_dump($_SESSION["users"]["registro_sesion_usuario"]);
-// Verifica si el usuario está en sesión
-if (isset($_SESSION["users"])) {
-
-    // Verifica si el usuario debe actualizar la contraseña
-    if (!isset($_SESSION["users"]["ultimo_login_usuario"]) || trim($_SESSION["users"]["ultimo_login_usuario"]) === '') {
-        // Redirige a la página nuevoPassword.php en la carpeta pages si está vacío o no está definido
-        include "pages/nuevoPassword.php";
-        exit(); // Asegúrate de detener la ejecución del script
-    }
-
-    // Determina la ruta solicitada
-    $route = !empty($routesArray[0]) ? $routesArray[0] : "inicio";
-    $validRoutes = ["dashboard", "usuarios", "proveedores","productos","cat-productos", "salir"]; // Añadir rutas válidas aquí
-
-    // Verifica si la ruta es válida y carga la página correspondiente
-    if (in_array($route, $validRoutes)) {
-        loadPage($route, $path, $routesArray); // Llama a la función `loadPage`
+    // Verifica si la página es válida y si existe el archivo
+    if (in_array($route, $validPages) && file_exists("views/pages/{$route}.php")) {
+        include "views/pages/{$route}.php";
     } else {
-        include('pages/404.php'); // Página de error 404
+        include "views/pages/404.php"; // Página de error 404
     }
-} else {
-    include "pages/login.php"; // Página de login
+
+    // Cierra el contenedor de contenido
+    echo '</div>'; // Fin de page-content
+
+    // Cierra el contenedor principal
+    echo '</div>'; // Fin de layout-wrapper
 }
 
+// Cargar la página
+loadPage($route, $validPages);
 
-
-
-
-
-
-
-
-
-
+// Incluye scripts y pie de página
 include "modules/scripts.php";
 include "modules/footerEnd.php";
