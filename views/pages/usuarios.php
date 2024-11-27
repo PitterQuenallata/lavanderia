@@ -55,7 +55,7 @@
               <tr>
                   <th class="text-center" scope="row">' . ($key + 1) . '</th>
                   <td class="text-center" scope="row">
-                      <img class="img-fluid avatar-xs rounded-circle" src="views/assets/'. $value["foto_usuario"] . '" alt="">
+                      <img class="img-fluid avatar-xs rounded-circle" src="' . $value["foto_usuario"] . '" alt="">
                   </td>
                   <td>' . mb_strtoupper($value["nombre_usuario"] . " " . $value["apellido_paterno_usuario"] . " " . $value["apellido_materno_usuario"], 'UTF-8') . '</td>
                   <td>' . $value["user_usuario"] . '</td>
@@ -113,13 +113,13 @@
         <h4 class="modal-title">Agregar Usuario</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" enctype="multipart/form-data" class="needs-validation">
+      <form method="post" class="needs-validation" novalidate>
         <div class="modal-body p-4">
 
           <div class="row">
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="field-1" class="form-label">Nombres</label>
+                <label for="field-1" class="form-label">Nombres <span class="text-danger">*</label>
                 <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" oninput="validateJS(event,'text')" required="" style="text-transform: uppercase;">
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -128,7 +128,7 @@
 
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="field-2" class="form-label">Apellido Paterno</label>
+                <label for="field-2" class="form-label">Apellido Paterno <span class="text-danger">*</label>
                 <input type="text" class="form-control" id="apellido_usuario" name="apellido_usuario" oninput="validateJS(event,'text')" required autocomplete="userapellido" style="text-transform: uppercase;">
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -137,7 +137,7 @@
 
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="field-2" class="form-label">Apellido Materno</label>
+                <label for="field-2" class="form-label">Apellido Materno <span class="text-danger">*</label>
                 <input type="text" class="form-control" id="apellido_materno_usuario" name="apellido_materno_usuario" required oninput="validateJS(event,'text')" autocomplete="userapellidom" style="text-transform: uppercase;">
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -148,7 +148,7 @@
           <div class="row">
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="field-4" class="form-label">Usuario</label>
+                <label for="field-4" class="form-label">Usuario <span class="text-danger">*</label>
                 <input type="text" class="form-control" id="nuevoUsuario" name="user_usuario" oninput="validateJS(event,'complete')" required autocomplete="username">
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -156,7 +156,7 @@
             </div>
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="field-5" class="form-label">Contraseña</label>
+                <label for="field-5" class="form-label">Contraseña <span class="text-danger">*</label>
                 <input type="password" class="form-control" id="password_usuario" name="password_usuario" oninput="validateJS(event,'password')" required autocomplete="current-password">
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -165,22 +165,24 @@
 
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="roles" class="form-label">Roles</label>
+                <label for="roles" class="form-label">Roles<span class="text-danger">*</span></label>
                 <select class="form-select" name="rol_usuario" id="rol_usuario" required>
-                  <option selected="">Elije un rol</option>
+                  <option value="" selected disabled>Elije un rol</option>
                   <option value="administrador">Administrador</option>
                   <option value="promotor">Promotor</option>
                   <option value="secretaria">Secretaria</option>
                 </select>
+                <div class="invalid-feedback">Por favor seleccione un rol válido.</div>
               </div>
             </div>
+
           </div>
 
 
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="field-4" class="form-label">Celular</label>
+                <label for="field-4" class="form-label">Celular <span class="text-danger">*</label>
                 <input type="text" class="form-control" id="celular_usuario" name="celular_usuario" onchange="validateJS(event,'phone')" required>
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -206,7 +208,7 @@
                   <input class="form-control" type="hidden" name="defaultFoto" value="views/assets/media/avatars/avatar0.jpg">
                 </div>
                 <div class="ms-4 mt-2">
-                  <img class="img-fluid avatar-md rounded  previsualizar" src="<?php echo $path ?>views/assets/media/avatars/avatar0.jpg" alt="fotoUser">
+                  <img class="img-fluid avatar-md rounded  previsualizar" src="views/assets/media/avatars/avatar0.jpg" alt="fotoUser">
                 </div>
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -241,7 +243,7 @@
         <h4 class="modal-title">Editar Usuario</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" enctype="multipart/form-data" class="needs-validation">
+      <form method="post" class="needs-validation" novalidate>
 
         <input type="hidden" id="passwordActual" name="passwordActual" value="">
         <input type="hidden" id="fotoActual" name="fotoActual" value="">
@@ -321,7 +323,7 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="field-5" class="form-label">Email</label>
-                <input type="email" class="form-control" id="editarEmail" name="editarEmail"  oninput="validateJS(event,'email')" required>
+                <input type="email" class="form-control" id="editarEmail" name="editarEmail" oninput="validateJS(event,'email')" required>
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
               </div>
@@ -334,7 +336,7 @@
 
               <div class="input-group d-flex align-items-center">
                 <div class="me-3">
-                  <input class="form-control nuevaFoto" name="editarFoto" type="file"  style="width: 300px">
+                  <input class="form-control nuevaFoto" name="editarFoto" type="file" style="width: 300px">
                 </div>
                 <div class="ms-4 mt-2">
                   <img class="img-fluid avatar-md rounded  previsualizar" src="path_a_foto" alt="fotoUser">

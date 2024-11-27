@@ -34,7 +34,7 @@
 
 		
 
-
+		
 			
 
 			<li class="nav-link waves-effect waves-light" id="theme-mode">
@@ -44,9 +44,17 @@
 			<li class="dropdown">
 				<a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
 					href="#" role="button" aria-haspopup="false" aria-expanded="false">
-					<img src="views/assets/images/users/avatar-3.jpg" alt="user-image" class="rounded-circle">
+					<img src="<?php echo $_SESSION["users"]["foto_usuario"] ?>" alt="user-image" class="rounded-circle">
 					<span class="ms-1 d-none d-md-inline-block">
-						Madhly <i class="mdi mdi-chevron-down"></i>
+					<?php 
+                  // Obtener el nombre y el apellido de la sesión
+                  $nombre = mb_convert_case(mb_strtolower($_SESSION["users"]["nombre_usuario"], 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+                  $apellido = mb_convert_case(mb_strtolower($_SESSION["users"]["apellido_paterno_usuario"], 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+
+                  // Mostrar el nombre y apellido con la primera letra en mayúscula
+                  echo $nombre . " " . $apellido;
+                  ?>
+
 					</span>
 				</a>
 
@@ -77,7 +85,7 @@
 					<div class="dropdown-divider"></div>
 
 					<!-- item-->
-					<a href="/salir" class="dropdown-item notify-item">
+					<a href="salir" class="dropdown-item notify-item">
 						<i data-lucide="log-out" class="font-size-16 me-2"></i>
 						<span>Salir</span>
 					</a>

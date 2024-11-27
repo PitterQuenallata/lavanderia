@@ -1,11 +1,11 @@
-$(document).ready(function() {
+$(document).ready(function () {
   // Destruir cualquier instancia previa de DataTable
-  if ($.fn.DataTable.isDataTable('#tablaCatProductos')) {
-    $('#tablaCatProductos').DataTable().destroy();
+  if ($.fn.DataTable.isDataTable('#tablaPrendas')) {
+    $('#tablaPrendas').DataTable().destroy();
   }
 
-  // Inicializar DataTable con configuración en español y alineamiento de columnas
-  $('#tablaCatProductos').DataTable({
+  // Inicializar DataTable con configuración en español
+  $('#tablaPrendas').DataTable({
     "language": {
       "sProcessing": "Procesando...",
       "sLengthMenu": "Mostrar _MENU_ registros",
@@ -14,10 +14,7 @@ $(document).ready(function() {
       "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
       "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
       "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-      "sInfoPostFix": "",
       "sSearch": "Buscar:",
-      "sUrl": "",
-      "sInfoThousands": ",",
       "sLoadingRecords": "Cargando...",
       "oPaginate": {
         "sFirst": "Primero",
@@ -33,19 +30,16 @@ $(document).ready(function() {
   });
 });
 
-
-
-
 /*=============================================
-EDITAR CAT PRODUCTOS
+EDITAR PRENDA
 =============================================*/
-$(".btnEditarCatProducto").click(function () {
-  var idCatProductos = $(this).attr("idCatProductos");
+$(".btnEditarPrenda").click(function () {
+  var idPrenda = $(this).attr("idPrenda");
   var datos = new FormData();
-  datos.append("idCatProductos", idCatProductos);
-  //console.log(idCatProductos);
+  datos.append("idPrenda", idPrenda);
+
   $.ajax({
-    url: "ajax/cat.productos.ajax.php",
+    url: "ajax/prendas.ajax.php",
     method: "POST",
     data: datos,
     cache: false,
@@ -54,28 +48,29 @@ $(".btnEditarCatProducto").click(function () {
     dataType: "json",
     success: function (respuesta) {
       console.log("respuesta", respuesta);
-      $("#idCatProductos").val(respuesta["id_categoria_producto"]);
-      $("#editarNombreCatProducto").val(respuesta["nombre_categoria_producto"]);
-
-
+      $("#idPrenda").val(respuesta["id_prenda"]);
+      $("#editarDescripcionPrenda").val(respuesta["descripcion_prenda"]);
+      $("#editarCategoriaPrenda").val(respuesta["id_categoria_prenda"]);
     },
+    error: function (error) {
+      console.error("Error al obtener los datos de la prenda:", error);
+    }
   });
-});
+
+
 
 /*=============================================
-ELIMINAR CAT PRODUCTOS
+ELIMINAR PRENDA
 =============================================*/
-$(".btnEliminarCatProducto").click(function () {
-  var idCatProductos = $(this).attr("idCatProductos");
-    // Construir la URL correctamente con el ID de la categoría
-    var baseURL = "./cat-productos?idCatProductos=" + idCatProductos;
+$(".btnEliminarPrenda").click(function () {
+  var idPrenda = $(this).attr("idPrenda");
 
-    // Llamar a la función personalizada de SweetAlert
-    fncSweetAlert("confirm", "¡Está seguro de borrar la categoría?", baseURL);
-  
-  // var baseURL = "cat-productos?ruta=catproduct&idCatProductos=" + idCatProductos;
+  // Construir la URL correctamente con el ID de la prenda
+  var baseURL = "./prendas?idPrenda=" + idPrenda;
 
-  // // Llamar a la función personalizada de SweetAlert
-  // fncSweetAlert("confirm", "¡Está seguro de borrar la categoria?", baseURL);
+  // Llamar a la función personalizada de SweetAlert
+  fncSweetAlert("confirm", "¡Está seguro de borrar la prenda?", baseURL);
 });
 
+
+});

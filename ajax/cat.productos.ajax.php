@@ -19,9 +19,6 @@ class AjaxCatProductos {
 
     echo json_encode($respuesta);
   }
-  /*=============================================
-  ELIMINAR CAT PRODUCTOS
-  =============================================*/
 
 
  

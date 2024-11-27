@@ -45,11 +45,18 @@ class ControladorUsuarios
                     $ultimoLogin = ModeloUsuarios::mdlActualizarUsuario($tabla, $item1, $valor1, $item2, $valor2);
                     if ($ultimoLogin == "ok") {
                         $_SESSION["users"]["ultimo_login_usuario"] = $fechaActual;
-                        // Redirigir al usuario o mostrar un mensaje de éxito
-                        echo '<script>
-                       
-                        window.location = "/dashboard";
-                        </script>';
+                        
+                        // Redirección según el rol del usuario
+                        $rolUsuario = $_SESSION["users"]["rol_usuario"];
+
+                        if ($rolUsuario == "administrador") {
+                            echo '<script>window.location = "dashboard";</script>';
+                        } elseif ($rolUsuario == "promotor" || $rolUsuario == "secretaria") {
+                            echo '<script>window.location = "orden";</script>';
+                        } else {
+                            // Redirección por defecto en caso de un rol desconocido
+                            echo '<script>window.location = "login";</script>';
+                        }
                     }
                 } else {
 
@@ -116,11 +123,20 @@ static public function ctrIngresoUsuario()
                                 // Usar el ID real del usuario autenticado
                                 $_SESSION['id_usuario'] = $respuesta["id_usuario"];
                                 $_SESSION["users"] = $respuesta;
-
-                                echo '<script>
-                                window.location = "dashboard";
-                                </script>';
+                            
+                                // Redirección según el rol del usuario
+                                $rolUsuario = $_SESSION["users"]["rol_usuario"];
+                            
+                                if ($rolUsuario == "administrador") {
+                                    echo '<script>window.location = "dashboard";</script>';
+                                } elseif ($rolUsuario == "promotor" || $rolUsuario == "secretaria") {
+                                    echo '<script>window.location = "orden";</script>';
+                                } else {
+                                    // Redirección por defecto en caso de un rol desconocido
+                                    echo '<script>window.location = "login";</script>';
+                                }
                             }
+                            
                         
                     } else {
                         echo '<div class="alert alert-danger mt-3">El usuario está inactivo</div>
@@ -258,7 +274,7 @@ Crear Usuario
                 //print_r($respuesta);
                 if ($respuesta == "ok") {
                     echo '<script>
-                    fncSweetAlert("success", "Usuario guardado correctamente", "/usuarios");
+                    fncSweetAlert("success", "Usuario guardado correctamente", "usuarios");
                 </script>';
                 } else {
                     echo '<script>
@@ -420,7 +436,7 @@ Crear Usuario
                 if ($respuesta == "ok") {
 
                     echo '<script>
-                fncSweetAlert("success", "El usuario ha sido editado correctamente", "/usuarios");
+                fncSweetAlert("success", "El usuario ha sido editado correctamente", "usuarios");
                 </script>';
                 } else {
 

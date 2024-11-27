@@ -1,165 +1,214 @@
+<?php
+$rolUsuario = $_SESSION["users"]["rol_usuario"] ?? null;
+
+// Definir las opciones del menú para cada rol
+$menuByRole = [
+	"administrador" => [
+		[
+			"title" => "Dashboard",
+			"icon" => "airplay",
+			"link" => "dashboard"
+		],
+		[
+			"title" => "Ordenes",
+			"icon" => "clipboard",
+			"submenu" => [
+				["title" => "Nueva orden", "link" => "orden"],
+				["title" => "Ver orden", "link" => "listOrden"],
+				["title" => "Colores", "link" => "colores"],
+			]
+		],
+		[
+			"title" => "Prendas",
+			"icon" => "shopping-bag",
+			"submenu" => [
+				["title" => "Prendas", "link" => "prendas"],
+				["title" => "Categoria Prendas", "link" => "cat-prendas"],
+			]
+		],
+		[
+			"title" => "Servicios",
+			"icon" => "droplet",
+			"submenu" => [
+				["title" => "Lista de lavados", "link" => "lavados"],
+			]
+		],
+		[
+			"title" => "Compras / Proveedores",
+			"icon" => "clipboard",
+			"submenu" => [
+				["title" => "Nueva compra", "link" => "compras"],
+				["title" => "Lista de compras", "link" => "listCompras"],
+				["title" => "Proveedores", "link" => "proveedores"],
+			]
+		],
+		[
+			"title" => "Productos",
+			"icon" => "book-open",
+			"submenu" => [
+				["title" => "Productos", "link" => "productos"],
+				["title" => "Categoria Productos", "link" => "cat-productos"],
+			]
+		],
+		[
+			"title" => "Usuarios",
+			"icon" => "user",
+			"link" => "usuarios"
+		],
+		[
+			"title" => "Clientes",
+			"icon" => "user",
+			"link" => "clientes"
+		],
+		[
+			"title" => "Pagos",
+			"icon" => "dollar-sign",
+			"link" => "pagos"
+		],
+		[
+			"title" => "Reportes",
+			"icon" => "sidebar",
+			"link" => "reportes"
+		],
+		[
+			"title" => "Salir",
+			"icon" => "log-out",
+			"link" => "salir"
+		]
+	],
+	"promotor" => [
+		[
+			"title" => "Ordenes",
+			"icon" => "clipboard",
+			"submenu" => [
+				["title" => "Nueva orden", "link" => "orden"],
+				["title" => "Ver orden", "link" => "listOrden"],
+				["title" => "Colores", "link" => "colores"],
+			]
+		],
+		[
+			"title" => "Prendas",
+			"icon" => "shopping-bag",
+			"submenu" => [
+				["title" => "Prendas", "link" => "prendas"],
+				["title" => "Categoria Prendas", "link" => "cat-prendas"],
+			]
+		],
+		[
+			"title" => "Servicios",
+			"icon" => "droplet",
+			"submenu" => [
+				["title" => "Lista de lavados", "link" => "lavados"],
+			]
+		],
+		[
+			"title" => "Salir",
+			"icon" => "log-out",
+			"link" => "salir"
+		]
+
+	],
+	"secretaria" => [
+		[
+			"title" => "Ordenes",
+			"icon" => "clipboard",
+			"submenu" => [
+				["title" => "Nueva orden", "link" => "orden"],
+				["title" => "Ver orden", "link" => "listOrden"],
+			]
+		],
+		[
+			"title" => "Servicios",
+			"icon" => "droplet",
+			"submenu" => [
+				["title" => "Lista de lavados", "link" => "lavados"],
+			]
+		],
+		[
+			"title" => "Pagos",
+			"icon" => "dollar-sign",
+			"link" => "pagos"
+		],
+		[
+			"title" => "Salir",
+			"icon" => "log-out",
+			"link" => "salir"
+		]
+
+	]
+];
+
+// Obtener el menú del rol actual
+$menuItems = $menuByRole[$rolUsuario] ?? [];
+?>
+
 <!-- ========== Left Sidebar ========== -->
 <div class="main-menu">
-	<!-- Brand Logo -->
-	<div class="logo-box">
-		<!-- Brand Logo Light -->
-		<a href="index.html" class="logo-light">
-			<img src="views/assets/images/logo-light.png" alt="logo" class="logo-lg" height="32">
-			<img src="views/assets/images/logo-light-sm.png" alt="small logo" class="logo-sm" height="32">
-		</a>
+    <!-- Brand Logo -->
+    <div class="logo-box">
+        <a href="dashboard" class="logo-light">
+            <img src="views/assets/images/logo-light.png" alt="logo" class="logo-lg" height="32">
+            <img src="views/assets/images/logo-light-sm.png" alt="small logo" class="logo-sm" height="32">
+        </a>
+        <a href="dashboard" class="logo-dark">
+            <img src="views/assets/images/logo-dark.png" alt="dark logo" class="logo-lg" height="32">
+            <img src="views/assets/images/logo-dark-sm.png" alt="small logo" class="logo-sm" height="32">
+        </a>
+    </div>
 
-		<!-- Brand Logo Dark -->
-		<a href="index.html" class="logo-dark">
-			<img src="views/assets/images/logo-dark.png" alt="dark logo" class="logo-lg" height="32">
-			<img src="views/assets/images/logo-dark-sm.png" alt="small logo" class="logo-sm" height="32">
-		</a>
-	</div>
-
-	<!--- Menu -->
-	<div data-simplebar>
-		<ul class="app-menu">
-
-			<li class="menu-title">Navegación</li>
-			<!--! ============================ 				Dashboard 		============================== !-->
-			<li class="menu-item">
-				<a href="/dashboard" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="airplay "></i></span>
-					<span class="menu-text"> Dashboard </span>
-				</a>
-			</li>
-
-			<!--! ============================ 				ordenes 		============================== !-->
-
-			<li class="menu-item">
-				<a href="#menuComponentsui" data-bs-toggle="collapse" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="clipboard"></i></span>
-					<span class="menu-text"> Ordenes </span>
-					<span class="menu-arrow"></span>
-				</a>
-				<div class="collapse" id="menuComponentsui">
-					<ul class="sub-menu">
-						<li class="menu-item">
-							<a href="/orden" class="menu-link">
-								<span class="menu-text">Nueva orden</span>
-							</a>
-						</li>
-						<li class="menu-item">
-							<a href="/listOrden" class="menu-link">
-								<span class="menu-text">Ver orden</span>
-							</a>
-						</li>
-						<li class="menu-item">
-							<a href="/colores" class="menu-link">
-								<span class="menu-text">Colores</span>
-							</a>
-						</li>
-
-					</ul>
-				</div>
-			</li>
-
-			<!--! ============================ 				Prendas 		============================== !-->
-			<li class="menu-item">
-				<a href="#menuExtendedui2" data-bs-toggle="collapse" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="shopping-bag"></i></span>
-					<span class="menu-text"> Prendas </span>
-					<span class="menu-arrow"></span>
-				</a>
-				<div class="collapse" id="menuExtendedui2">
-					<ul class="sub-menu">
-						<li class="menu-item">
-							<a href="/prendas" class="menu-link">
-								<span class="menu-text">Prendas</span>
-							</a>
-						</li>
-						<li class="menu-item">
-							<a href="/categoriaP" class="menu-link">
-								<span class="menu-text">Categoria Prendas</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</li>
-
-			<!--! ============================ 				Compras / proveedores 		============================== !-->
-
-			<li class="menu-item">
-				<a href="#menuIcons" data-bs-toggle="collapse" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="clipboard"></i></span>
-					<span class="menu-text"> Compras / Proveedores </span>
-					<span class="menu-arrow"></span>
-				</a>
-				<div class="collapse" id="menuIcons">
-					<ul class="sub-menu">
-						<li class="menu-item">
-							<a href="/compra" class="menu-link">
-								<span class="menu-text">Nueva compra</span>
-							</a>
-						</li>
-						<li class="menu-item">
-							<a href="/listCompra" class="menu-link">
-								<span class="menu-text">Lista de compras</span>
-							</a>
-						</li>
-						<li class="menu-item">
-							<a href="/proveedores" class="menu-link">
-								<span class="menu-text">Proveedores</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</li>
-			<!--! ============================ 				productos 		============================== !-->
-			<li class="menu-item">
-				<a href="#menuExtendedui" data-bs-toggle="collapse" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="book-open"></i></span>
-					<span class="menu-text"> Productos </span>
-					<span class="menu-arrow"></span>
-				</a>
-				<div class="collapse" id="menuExtendedui">
-					<ul class="sub-menu">
-						<li class="menu-item">
-							<a href="/productos" class="menu-link">
-								<span class="menu-text">Productos</span>
-							</a>
-						</li>
-						<li class="menu-item">
-							<a href="/cat-productos" class="menu-link">
-								<span class="menu-text">Categoria Productos</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</li>
-
-			<!--! ============================ 				usuarios 		============================== !-->
-			<li class="menu-item">
-				<a href="/usuarios" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="user"></i></span>
-					<span class="menu-text"> Usuarios </span>
-				</a>
-			</li>
-
-			<!--! ============================ 				Pagos 		============================== !-->
-			<li class="menu-item">
-				<a href="/pagos" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="dollar-sign"></i></span>
-					<span class="menu-text"> Pagos </span>
-				</a>
-			</li>
-
-			<!--! ============================ 				reportes 		============================== !-->
-
-			<li class="menu-item">
-				<a href="/reportes" class="menu-link waves-effect">
-					<span class="menu-icon"><i data-lucide="sidebar"></i></span>
-					<span class="menu-text"> Reportes </span>
-				</a>
-			</li>
-
-		</ul>
-	</div>
+    <!-- Menu -->
+    <div data-simplebar>
+        <ul class="app-menu">
+            <li class="menu-title">Navegación</li>
+            <?php foreach ($menuItems as $item): ?>
+                <?php 
+                // Generar un ID único para los submenús
+                $menuId = preg_replace('/[^a-zA-Z0-9]/', '', $item['title']); 
+                ?>
+                <li class="menu-item">
+                    <?php if (isset($item['submenu'])): ?>
+                        <a href="#menu<?= $menuId ?>" data-bs-toggle="collapse" class="menu-link waves-effect">
+                            <span class="menu-icon"><i data-lucide="<?= $item['icon'] ?>"></i></span>
+                            <span class="menu-text"> <?= $item['title'] ?> </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse" id="menu<?= $menuId ?>">
+                            <ul class="sub-menu">
+                                <?php foreach ($item['submenu'] as $subItem): ?>
+                                    <li class="menu-item">
+                                        <a href="<?= $subItem['link'] ?>" class="menu-link">
+                                            <span class="menu-text"><?= $subItem['title'] ?></span>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a href="<?= $item['link'] ?>" class="menu-link waves-effect">
+                            <span class="menu-icon"><i data-lucide="<?= $item['icon'] ?>"></i></span>
+                            <span class="menu-text"> <?= $item['title'] ?> </span>
+                        </a>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
 </div>
 
-
-
+<script>
+    // Asegúrate de que los menús colapsables se abren al primer clic
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (toggle) {
+        toggle.addEventListener('click', function (e) {
+            var target = document.querySelector(toggle.getAttribute('href'));
+            if (target.classList.contains('show')) {
+                target.classList.remove('show');
+            } else {
+                document.querySelectorAll('.collapse.show').forEach(function (openMenu) {
+                    openMenu.classList.remove('show');
+                });
+                target.classList.add('show');
+            }
+            e.preventDefault();
+        });
+    });
+</script>

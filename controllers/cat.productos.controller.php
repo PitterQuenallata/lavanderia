@@ -35,7 +35,7 @@ class ControladorCatProductos
         var_dump($respuesta);
         if ($respuesta == "ok") {
           echo '<script>
-          fncSweetAlert("success", "El proveedor ha sido agregado correctamente", "/cat-productos");
+          fncSweetAlert("success", "El proveedor ha sido agregado correctamente", "cat-productos");
           </script>';
         } else {
           echo '<script>
@@ -78,7 +78,7 @@ class ControladorCatProductos
 
         if ($respuesta == "ok") {
           echo '<script>
-                  fncSweetAlert("success", "La categoria ha sido actualizado correctamente", "/cat-productos");
+                  fncSweetAlert("success", "La categoria ha sido actualizado correctamente", "cat-productos");
                   </script>';
         } else {
           echo '<script>
@@ -108,7 +108,7 @@ class ControladorCatProductos
 
       if ($respuesta == "ok") {
         echo '<script>
-        fncSweetAlert("success", "La categoria ha sido eliminado correctamente", "/cat-productos");
+        fncSweetAlert("success", "La categoria ha sido eliminado correctamente", "cat-productos");
         </script>';
       } else {
         echo '<script>

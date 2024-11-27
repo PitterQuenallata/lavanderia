@@ -4,35 +4,78 @@
 ob_start();
 session_start();
 
-// Lista de páginas válidas
-$validPages = [
-    "inicio",
-    "usuarios",
-    "proveedores",
-    "productos",
-    "cat-productos",
-    "dashboard",
-    "salir"
-];
-
-// Obtener la página solicitada
-$requestUri = trim($_SERVER['REQUEST_URI'], '/');
-$basePath = "lavanderia";
-if (strpos($requestUri, $basePath) === 0) {
-    $requestUri = substr($requestUri, strlen($basePath));
-}
-$segments = explode('/', $requestUri);
-$route = !empty($segments[0]) ? $segments[0] : "inicio";
-
 // Incluye la cabecera
 include "modules/head.php";
 
-// Página contenedora
-echo '<input type="hidden" id="urlPath" value="/lavanderia/">';
+if (isset($_SESSION["users"])) {
 
-// Función para cargar la página solicitada
-function loadPage($route, $validPages)
-{
+    // Verifica si el usuario debe actualizar la contraseña
+    if (!isset($_SESSION["users"]["ultimo_login_usuario"]) || trim($_SESSION["users"]["ultimo_login_usuario"]) === '') {
+        include "pages/nuevoPassword.php";
+        exit(); // Detener ejecución
+    }
+
+    // Define rutas válidas
+    $validRoutes = [
+        "dashboard",
+        "usuarios",
+        "orden",
+        "listOrden",
+        "colores",
+        "prendas",
+        "cat-prendas",
+        "compras",
+        "listCompras",
+        "proveedores",
+        "productos",
+        "pagos",
+        "reportes",
+        "cat-productos",
+        "lavados",
+        "clientes",
+        "salir",
+        "login"
+    ];
+
+    // Define accesos permitidos por rol
+    $accessByRole = [
+        "administrador" => [
+            "dashboard",
+            "usuarios",
+            "orden",
+            "listOrden",
+            "colores",
+            "prendas",
+            "cat-prendas",
+            "compras",
+            "listCompras",
+            "proveedores",
+            "productos",
+            "pagos",
+            "reportes",
+            "lavados",
+            "cat-productos",
+            "clientes",
+            "salir"
+        ],
+        "promotor" => [
+            "orden",
+            "listOrden",
+            "colores",
+            "prendas",
+            "lavados",
+            "cat-prendas",
+            "salir"
+        ],
+        "secretaria" => [
+            "orden",
+            "listOrden",
+            "lavados",
+            "pagos",
+            "salir"
+        ]
+    ];
+
     // Contenedor principal Begin page
     echo '<div class="layout-wrapper">';
 
@@ -44,12 +87,22 @@ function loadPage($route, $validPages)
 
     // Incluye la cabecera
     include "modules/header.php";
+    //print_r($_SESSION["users"]["rol_usuario"]);
+    // Manejador de rutas
+    if (isset($_GET["ruta"])) {
+        $ruta = $_GET["ruta"];
+        $rolUsuario = $_SESSION["users"]["rol_usuario"]; // Asume que este campo contiene el rol del usuario
 
-    // Verifica si la página es válida y si existe el archivo
-    if (in_array($route, $validPages) && file_exists("views/pages/{$route}.php")) {
-        include "views/pages/{$route}.php";
+        // Verifica si la ruta es válida y si el rol tiene acceso
+        if (in_array($ruta, $validRoutes) && in_array($ruta, $accessByRole[$rolUsuario])) {
+            include "pages/" . $ruta . ".php";
+        } else {
+            // Si la ruta no es válida o el rol no tiene acceso
+            include "pages/404.php";
+        }
     } else {
-        include "views/pages/404.php"; // Página de error 404
+        // Página predeterminada (dashboard)
+        include "pages/dashboard.php";
     }
 
     // Cierra el contenedor de contenido
@@ -57,10 +110,13 @@ function loadPage($route, $validPages)
 
     // Cierra el contenedor principal
     echo '</div>'; // Fin de layout-wrapper
-}
 
-// Cargar la página
-loadPage($route, $validPages);
+} else {
+    // Página de inicio de sesión
+    echo '<body class="hold-transition login-page">';
+    include "pages/login.php";
+    echo '</body>';
+}
 
 // Incluye scripts y pie de página
 include "modules/scripts.php";

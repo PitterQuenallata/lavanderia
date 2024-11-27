@@ -1,8 +1,12 @@
 Options All -Indexes
-Options -MultiViews
-
 RewriteEngine On
 
+# Si no es un archivo o directorio existente
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+
+# Si no hay una ruta, redirige al dashboard
+RewriteRule ^$ index.php?ruta=dashboard [QSA,L]
+
+# Maneja las rutas dinámicas y permite parámetros GET
+RewriteRule ^([-a-zA-Z0-9]+)$ index.php?ruta=$1 [QSA,L]

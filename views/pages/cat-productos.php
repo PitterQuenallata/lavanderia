@@ -83,7 +83,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="mb-3">
-                <label for="field-1" class="form-label">Nombre</label>
+                <label for="field-1" class="form-label">Nombre <span class="text-danger">*</label>
                 <input type="text" class="form-control" id="nombre_categoria_producto" name="nombre_categoria_producto" oninput="validateJS(event,'text')" style="text-transform: uppercase;" required>
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
@@ -122,7 +122,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="mb-3">
-                <label for="field-1" class="form-label">Nombre</label>
+                <label for="field-1" class="form-label">Nombre <span class="text-danger">*</label>
                 <input type="text" class="form-control" id="editarNombreCatProducto" name="editarNombreCatProducto" oninput="validateJS(event,'text')" style="text-transform: uppercase;" required>
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>

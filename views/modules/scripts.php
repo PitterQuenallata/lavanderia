@@ -51,3 +51,9 @@
 <script src="views/assets/js/js/usuarios.js"></script>
 <script src="views/assets/js/js/proveedores.js"></script>
 <script src="views/assets/js/js/cat-productos.js"></script>
+<script src="views/assets/js/js/cat-prendas.js"></script>
+<script src="views/assets/js/js/prendas.js"></script>
+<script src="views/assets/js/js/colores.js"></script>
+<script src="views/assets/js/js/lavados.js"></script>
+<script src="views/assets/js/js/clientes.js"></script>
+<script src="views/assets/js/js/ordenes.js"></script>

@@ -245,11 +245,15 @@ $(document).on("click", ".btnElininarUsuario", function () {
   
   //fncSweetAlert("confirm", "¡Está seguro de borrar el usuario?", "/usuarios?&idUsuario=" + idUsuario + "&usuario=" + usuario + "&fotoUsuario=" + fotoUsuario);
   // Construir la URL correcta para la eliminación del usuario
-  var baseURL = "usuarios?ruta=usuarios&idUsuario=" + idUsuario;
+  // var baseURL = "usuarios?ruta=usuarios&idUsuario=" + idUsuario;
   var queryParams = "&usuario=" + encodeURIComponent(usuario) + "&fotoUsuario=" + encodeURIComponent(fotoUsuario);
 
-  // Llamar a la función personalizada de SweetAlert
-  fncSweetAlert("confirm", "¡Está seguro de borrar el usuario", baseURL + queryParams);
+  // // Llamar a la función personalizada de SweetAlert
+  // fncSweetAlert("confirm", "¡Está seguro de borrar el usuario", baseURL + queryParams);
   
- 
+   // Construir la URL correctamente con el ID de la categoría
+   var baseURL = "./usuarios?idUsuario=" + idUsuario;
+
+   // Llamar a la función personalizada de SweetAlert
+   fncSweetAlert("confirm", "¡Está seguro de borrar la categoría?", baseURL+queryParams);
 });

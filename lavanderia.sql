@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-11-2024 a las 03:36:59
+-- Tiempo de generación: 27-11-2024 a las 15:17:24
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `lavanderia`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `categorias_prendas`
+--
+
+CREATE TABLE `categorias_prendas` (
+  `id_categoria_prenda` int(11) NOT NULL,
+  `nombre_categoria_prenda` varchar(255) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `categorias_prendas`
+--
+
+INSERT INTO `categorias_prendas` (`id_categoria_prenda`, `nombre_categoria_prenda`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 'jeans', '2024-11-27 07:50:28', '2024-11-27 08:05:47'),
+(2, 'Camisas', '2024-11-27 07:50:28', '2024-11-27 07:50:28'),
+(4, 'chaquetas', '2024-11-27 08:14:34', '2024-11-27 08:14:34');
 
 -- --------------------------------------------------------
 
@@ -43,6 +65,138 @@ INSERT INTO `categorias_productos` (`id_categoria_producto`, `nombre_categoria_p
 (2, 'Suavizantes', '2024-11-23 21:32:51', '2024-11-23 21:32:51'),
 (3, 'Herramientas', '2024-11-23 21:32:51', '2024-11-23 21:32:51'),
 (4, 'Material de Empaque', '2024-11-23 21:32:51', '2024-11-23 21:32:51');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `clientes`
+--
+
+CREATE TABLE `clientes` (
+  `id_cliente` int(11) NOT NULL,
+  `nombre_cliente` varchar(50) NOT NULL,
+  `apellido_cliente` varchar(50) NOT NULL,
+  `telefono_cliente` varchar(15) NOT NULL,
+  `direccion_cliente` text DEFAULT NULL,
+  `email_cliente` varchar(100) DEFAULT NULL,
+  `dni_cliente` varchar(20) DEFAULT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `clientes`
+--
+
+INSERT INTO `clientes` (`id_cliente`, `nombre_cliente`, `apellido_cliente`, `telefono_cliente`, `direccion_cliente`, `email_cliente`, `dni_cliente`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 'Juan', 'Pérez', '123456789', 'Calle Principal 123', 'juan.perez@email.com', '12345678', '2024-11-27 09:24:51', '2024-11-27 09:24:51');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `colores`
+--
+
+CREATE TABLE `colores` (
+  `id_color` int(11) NOT NULL,
+  `nombre_color` varchar(50) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `colores`
+--
+
+INSERT INTO `colores` (`id_color`, `nombre_color`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 'Rojo', '2024-11-27 09:23:37', '2024-11-27 09:23:37'),
+(2, 'Azul', '2024-11-27 09:23:37', '2024-11-27 09:23:37'),
+(4, 'verde', '2024-11-27 09:25:39', '2024-11-27 09:25:39');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lavados`
+--
+
+CREATE TABLE `lavados` (
+  `id_lavado` int(11) NOT NULL,
+  `descripcion_lavado` varchar(100) NOT NULL,
+  `tipo_lavado` enum('básico','premium','especial') NOT NULL DEFAULT 'básico',
+  `costo_lavado` decimal(10,2) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `lavados`
+--
+
+INSERT INTO `lavados` (`id_lavado`, `descripcion_lavado`, `tipo_lavado`, `costo_lavado`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 'Lavado Básico', 'básico', 10.00, '2024-11-27 09:23:46', '2024-11-27 09:23:46'),
+(2, 'Lavado Premium', 'premium', 20.00, '2024-11-27 09:23:46', '2024-11-27 09:23:46');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ordenes`
+--
+
+CREATE TABLE `ordenes` (
+  `id_orden` int(11) NOT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `numero_orden` varchar(20) NOT NULL,
+  `peso_orden` decimal(10,2) DEFAULT NULL,
+  `fecha_recepcion_orden` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_entrega_orden` timestamp NULL DEFAULT NULL,
+  `estado_orden` enum('pendiente','en proceso','completada','cancelada') NOT NULL DEFAULT 'pendiente',
+  `monto_orden` decimal(10,2) NOT NULL,
+  `comentario_orden` text DEFAULT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ordenes_prendas`
+--
+
+CREATE TABLE `ordenes_prendas` (
+  `id_orden` int(11) NOT NULL,
+  `id_prenda` int(11) NOT NULL,
+  `id_color` int(11) DEFAULT NULL,
+  `id_lavado` int(11) DEFAULT NULL,
+  `cantidad` int(11) NOT NULL,
+  `planchado` tinyint(1) DEFAULT 0,
+  `ojal` tinyint(1) DEFAULT 0,
+  `manualidad` tinyint(1) DEFAULT 0,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `prendas`
+--
+
+CREATE TABLE `prendas` (
+  `id_prenda` int(11) NOT NULL,
+  `id_categoria_prenda` int(11) NOT NULL,
+  `descripcion_prenda` varchar(255) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `prendas`
+--
+
+INSERT INTO `prendas` (`id_prenda`, `id_categoria_prenda`, `descripcion_prenda`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 1, 'jeans slim fitt', '2024-11-27 07:50:36', '2024-11-27 08:28:22'),
+(3, 2, 'Camisa Formal', '2024-11-27 07:50:36', '2024-11-27 07:50:36');
 
 -- --------------------------------------------------------
 
@@ -128,18 +282,65 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `apellido_paterno_usuario`, `apellido_materno_usuario`, `user_usuario`, `telefono_usuario`, `foto_usuario`, `email_usuario`, `password_usuario`, `estado_usuario`, `rol_usuario`, `ultimo_login_usuario`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 'juan', 'perez', 'gómez', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/772.jpg', 'juanperez@example.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-24 23:26:40', '2024-11-21 22:48:02', '2024-11-24 23:26:40'),
-(2, 'pitter', 'quenallata', 'quispe', 'pquenallata', '79128536', 'views/assets/media/avatars/usuarios/pquenallata/775.jpg', 'pquenallata@gmail.com', '$2a$07$azybxcags23425sdg23sdejXNkI6.Ib0xhO3BygJpBu2RvCY9qZb2', 1, 'administrador', '2024-11-23 10:44:02', '2024-11-22 16:46:34', '2024-11-23 10:44:02');
+(1, 'juan', 'perez', 'gómez', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/772.jpg', 'juanperez@example.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-27 08:15:45', '2024-11-21 22:48:02', '2024-11-27 08:15:45'),
+(2, 'pitter', 'quenallata', 'quispe', 'pquenallata', '79128536', 'views/assets/media/avatars/usuarios/pquenallata/775.jpg', 'pquenallata@gmail.com', '$2a$07$azybxcags23425sdg23sdemfC0c36zEVPKLDMP7sTYYm6xar3895u', 1, 'promotor', '2024-11-27 03:14:20', '2024-11-22 16:46:34', '2024-11-27 03:14:20');
 
 --
 -- Índices para tablas volcadas
 --
 
 --
+-- Indices de la tabla `categorias_prendas`
+--
+ALTER TABLE `categorias_prendas`
+  ADD PRIMARY KEY (`id_categoria_prenda`);
+
+--
 -- Indices de la tabla `categorias_productos`
 --
 ALTER TABLE `categorias_productos`
   ADD PRIMARY KEY (`id_categoria_producto`);
+
+--
+-- Indices de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  ADD PRIMARY KEY (`id_cliente`);
+
+--
+-- Indices de la tabla `colores`
+--
+ALTER TABLE `colores`
+  ADD PRIMARY KEY (`id_color`);
+
+--
+-- Indices de la tabla `lavados`
+--
+ALTER TABLE `lavados`
+  ADD PRIMARY KEY (`id_lavado`);
+
+--
+-- Indices de la tabla `ordenes`
+--
+ALTER TABLE `ordenes`
+  ADD PRIMARY KEY (`id_orden`),
+  ADD UNIQUE KEY `numero_orden` (`numero_orden`);
+
+--
+-- Indices de la tabla `ordenes_prendas`
+--
+ALTER TABLE `ordenes_prendas`
+  ADD PRIMARY KEY (`id_orden`,`id_prenda`),
+  ADD KEY `id_prenda` (`id_prenda`),
+  ADD KEY `id_color` (`id_color`),
+  ADD KEY `id_lavado` (`id_lavado`);
+
+--
+-- Indices de la tabla `prendas`
+--
+ALTER TABLE `prendas`
+  ADD PRIMARY KEY (`id_prenda`),
+  ADD KEY `id_categoria_prenda` (`id_categoria_prenda`);
 
 --
 -- Indices de la tabla `productos`
@@ -165,10 +366,46 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `categorias_prendas`
+--
+ALTER TABLE `categorias_prendas`
+  MODIFY `id_categoria_prenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT de la tabla `categorias_productos`
 --
 ALTER TABLE `categorias_productos`
   MODIFY `id_categoria_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `colores`
+--
+ALTER TABLE `colores`
+  MODIFY `id_color` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `lavados`
+--
+ALTER TABLE `lavados`
+  MODIFY `id_lavado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `ordenes`
+--
+ALTER TABLE `ordenes`
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `prendas`
+--
+ALTER TABLE `prendas`
+  MODIFY `id_prenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -186,11 +423,26 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `ordenes_prendas`
+--
+ALTER TABLE `ordenes_prendas`
+  ADD CONSTRAINT `ordenes_prendas_ibfk_1` FOREIGN KEY (`id_orden`) REFERENCES `ordenes` (`id_orden`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ordenes_prendas_ibfk_2` FOREIGN KEY (`id_prenda`) REFERENCES `prendas` (`id_prenda`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ordenes_prendas_ibfk_3` FOREIGN KEY (`id_color`) REFERENCES `colores` (`id_color`) ON DELETE SET NULL,
+  ADD CONSTRAINT `ordenes_prendas_ibfk_4` FOREIGN KEY (`id_lavado`) REFERENCES `lavados` (`id_lavado`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `prendas`
+--
+ALTER TABLE `prendas`
+  ADD CONSTRAINT `prendas_ibfk_1` FOREIGN KEY (`id_categoria_prenda`) REFERENCES `categorias_prendas` (`id_categoria_prenda`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `productos`
