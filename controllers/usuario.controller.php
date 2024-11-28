@@ -169,7 +169,7 @@ static public function ctrIngresoUsuario()
 
 
 
-    /*=============================================
+/*=============================================
 Crear Usuario
 =============================================*/
     static public function ctrCrearUsuario()
@@ -199,6 +199,7 @@ Crear Usuario
 
                 if (isset($_FILES["nuevaFoto"]["tmp_name"]) && !empty($_FILES["nuevaFoto"]["tmp_name"])) {
 
+                    print_r($_FILES["nuevaFoto"]);
                     list($ancho, $alto) = getimagesize($_FILES["nuevaFoto"]["tmp_name"]);
 
                     $nuevoAncho = 500;
@@ -227,7 +228,7 @@ Crear Usuario
                         imagejpeg($destino, $ruta);
                     } elseif ($_FILES["nuevaFoto"]["type"] == "image/png") {
 
-                        /*=============================================
+                    /*=============================================
                     GUARDAMOS LA IMAGEN EN EL DIRECTORIO
                     =============================================*/
 
@@ -324,6 +325,7 @@ Crear Usuario
 
 
 
+                //print_r($_FILES);
                 /*=============================================
             VALIDAR IMAGEN
             =============================================*/
@@ -331,7 +333,7 @@ Crear Usuario
                 $ruta = $_POST["fotoActual"];
 
                 if (isset($_FILES["editarFoto"]["tmp_name"]) && !empty($_FILES["editarFoto"]["tmp_name"])) {
-
+                    echo 'entro';
                     list($ancho, $alto) = getimagesize($_FILES["editarFoto"]["tmp_name"]);
 
                     $nuevoAncho = 500;
@@ -406,9 +408,9 @@ Crear Usuario
                     } else {
 
                         echo '<script>
-                    fncSweetAlert("error", "¡La contraseña no puede ir vacía o llevar caracteres especiales!");
-                    fncFormatInputs();
-                    </script>';
+                            fncSweetAlert("error", "¡La contraseña no puede ir vacía o llevar caracteres especiales!");
+                            fncFormatInputs();
+                            </script>';
                         return;
                     }
                 } else {
@@ -430,7 +432,7 @@ Crear Usuario
                     "telefono_usuario" => $_POST["editarCelular"],
                     "foto_usuario" => $ruta
                 );
-
+                //print_r($datos);
                 $respuesta = ModeloUsuarios::mdlEditarUsuario($tabla, $datos);
 
                 if ($respuesta == "ok") {
@@ -461,40 +463,42 @@ Crear Usuario
 
     static public function ctrBorrarUsuario()
     {
-
         if (isset($_GET["idUsuario"])) {
-
+    
+            $idUsuario = $_GET["idUsuario"];
+    
+            // Verificar si el usuario a eliminar es el administrador principal
+            if ($idUsuario == 1) {
+                echo '<script>
+                    fncSweetAlert("error", "No puedes eliminar al usuario administrador principal", "");
+                </script>';
+                return;
+            }
+    
             $tabla = "usuarios";
-            $datos = $_GET["idUsuario"];
-
+            $datos = $idUsuario;
+    
             // Decodificar la URL para obtener la ruta correcta de la foto
             $fotoUsuario = urldecode($_GET["fotoUsuario"]);
             $usuario = $_GET["usuario"];
-
+    
             if (!empty($fotoUsuario)) {
                 unlink($fotoUsuario);
                 rmdir('views/assets/media/avatars/usuarios/' . $usuario);
             }
-
-            // if($_GET["fotoUsuario"] != ""){
-
-            // 	unlink($_GET["fotoUsuario"]);
-            // 	rmdir('views/assets/media/avatars/usuarios/'.$_GET["usuario"]);
-
-            // }
-
+    
             $respuesta = ModeloUsuarios::mdlBorrarUsuario($tabla, $datos);
-
+    
             if ($respuesta == "ok") {
-
                 echo '<script>
-				fncSweetAlert("success", "El usuario ha sido borrado correctamente", "usuarios");
-				</script>';
+                    fncSweetAlert("success", "El usuario ha sido borrado correctamente", "usuarios");
+                </script>';
             } else {
                 echo '<script>
-						fncSweetAlert("error", "Error al borrar el usuario", "");
-				</script>';
+                    fncSweetAlert("error", "Error al borrar el usuario", "");
+                </script>';
             }
         }
     }
+    
 }

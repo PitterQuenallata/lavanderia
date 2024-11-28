@@ -71,6 +71,11 @@ $menuByRole = [
 			"link" => "reportes"
 		],
 		[
+			"title" => "Perfil",
+			"icon" => "settings ",
+			"link" => "perfil"
+		],
+		[
 			"title" => "Salir",
 			"icon" => "log-out",
 			"link" => "salir"
@@ -102,6 +107,11 @@ $menuByRole = [
 			]
 		],
 		[
+			"title" => "Perfil",
+			"icon" => "settings ",
+			"link" => "perfil"
+		],
+		[
 			"title" => "Salir",
 			"icon" => "log-out",
 			"link" => "salir"
@@ -130,6 +140,11 @@ $menuByRole = [
 			"link" => "pagos"
 		],
 		[
+			"title" => "Perfil",
+			"icon" => "settings ",
+			"link" => "perfil"
+		],
+		[
 			"title" => "Salir",
 			"icon" => "log-out",
 			"link" => "salir"
@@ -147,11 +162,11 @@ $menuItems = $menuByRole[$rolUsuario] ?? [];
     <!-- Brand Logo -->
     <div class="logo-box">
         <a href="dashboard" class="logo-light">
-            <img src="views/assets/images/logo-light.png" alt="logo" class="logo-lg" height="32">
+            <img src="views/assets/media/logoJSdark.png" alt="logo" class="logo-lg" height="60">
             <img src="views/assets/images/logo-light-sm.png" alt="small logo" class="logo-sm" height="32">
         </a>
         <a href="dashboard" class="logo-dark">
-            <img src="views/assets/images/logo-dark.png" alt="dark logo" class="logo-lg" height="32">
+            <img src="views/assets/media/logoJSblack.png" alt="dark logo" class="logo-lg" height="60">
             <img src="views/assets/images/logo-dark-sm.png" alt="small logo" class="logo-sm" height="32">
         </a>
     </div>

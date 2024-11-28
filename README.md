@@ -41,3 +41,12 @@ secretaria: gestionar y organizar el control y seguimiento de los procesos de la
 
   
 
+implementar cierre de navegador que se cierre session
+
+separar por navegacion
+-ordenes prendas
+divisiones
+organizar el menu
+
+cambiar icono(diseñar);
+login fotos();

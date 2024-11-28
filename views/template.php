@@ -33,6 +33,7 @@ if (isset($_SESSION["users"])) {
         "cat-productos",
         "lavados",
         "clientes",
+        "perfil",
         "salir",
         "login"
     ];
@@ -56,6 +57,7 @@ if (isset($_SESSION["users"])) {
             "lavados",
             "cat-productos",
             "clientes",
+            "perfil",
             "salir"
         ],
         "promotor" => [
@@ -65,6 +67,7 @@ if (isset($_SESSION["users"])) {
             "prendas",
             "lavados",
             "cat-prendas",
+            "perfil",
             "salir"
         ],
         "secretaria" => [
@@ -72,6 +75,7 @@ if (isset($_SESSION["users"])) {
             "listOrden",
             "lavados",
             "pagos",
+            "perfil",
             "salir"
         ]
     ];

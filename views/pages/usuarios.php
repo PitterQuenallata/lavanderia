@@ -113,7 +113,7 @@
         <h4 class="modal-title">Agregar Usuario</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" class="needs-validation" novalidate>
+      <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
         <div class="modal-body p-4">
 
           <div class="row">
@@ -157,7 +157,7 @@
             <div class="col-md-4">
               <div class="mb-3">
                 <label for="field-5" class="form-label">Contraseña <span class="text-danger">*</label>
-                <input type="password" class="form-control" id="password_usuario" name="password_usuario" oninput="validateJS(event,'password')" required autocomplete="current-password">
+                <input type="password" class="form-control" id="password_usuario" name="password_usuario" onchange="validateJS(event,'password')" required autocomplete="current-password">
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
               </div>
@@ -243,7 +243,7 @@
         <h4 class="modal-title">Editar Usuario</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="post" class="needs-validation" novalidate>
+      <form method="post"  enctype="multipart/form-data" class="needs-validation" novalidate>
 
         <input type="hidden" id="passwordActual" name="passwordActual" value="">
         <input type="hidden" id="fotoActual" name="fotoActual" value="">
@@ -291,7 +291,7 @@
             <div class="col-md-4">
               <div class="mb-3">
                 <label for="field-5" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" name="editarPassword" oninput="validateJS(event,'password')" autocomplete="current-password" placeholder="Ingresar nueva contraseña">
+                <input type="password" class="form-control" name="editarPassword" onchange="validateJS(event,'password')" autocomplete="current-password" placeholder="Ingresar nueva contraseña">
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
               </div>
@@ -323,7 +323,7 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="field-5" class="form-label">Email</label>
-                <input type="email" class="form-control" id="editarEmail" name="editarEmail" oninput="validateJS(event,'email')" required>
+                <input type="email" class="form-control" id="editarEmail" name="editarEmail" onchange="validateJS(event,'email')" required>
                 <div class="valid-feedback">Válido.</div>
                 <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
               </div>
@@ -348,10 +348,8 @@
             </div>
           </div>
 
-
-
-
         </div>
+        
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Cerrar</button>
           <button type="submit" class="btn btn-info waves-effect waves-light">Guardar</button>
