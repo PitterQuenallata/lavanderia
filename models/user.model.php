@@ -3,6 +3,26 @@
 require_once "conexion.php";
 
 class ModeloUsuarios{
+
+	/*=============================================
+OBTENER USUARIO POR ID
+=============================================*/
+
+static public function mdlObtenerUsuarioPorId($tabla, $id_usuario)
+{
+    $stmt = Conexion::conectar()->prepare(
+        "SELECT * FROM $tabla WHERE id_usuario = :id_usuario"
+    );
+
+    $stmt->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $stmt = null;
+}
+
 /*=============================================
     MODELO PARA ACTUALIZAR LA CONTRASEÑA
     =============================================*/
@@ -127,6 +147,42 @@ class ModeloUsuarios{
 
     $stmt = null;
 }
+/*=============================================
+MODELO PARA EDITAR PERFIL
+=============================================*/
+static public function mdlEditarPerfil($tabla, $datos)
+{
+    $stmt = Conexion::conectar()->prepare(
+        "UPDATE $tabla 
+        SET nombre_usuario = :nombre_usuario, 
+            apellido_paterno_usuario = :apellido_paterno_usuario,
+            apellido_materno_usuario = :apellido_materno_usuario,
+            email_usuario = :email_usuario, 
+            telefono_usuario = :telefono_usuario, 
+            password_usuario = :password_usuario, 
+            foto_usuario = :foto_usuario
+        WHERE id_usuario = :id_usuario"
+    );
+
+    $stmt->bindParam(":nombre_usuario", $datos["nombre_usuario"], PDO::PARAM_STR);
+    $stmt->bindParam(":apellido_paterno_usuario", $datos["apellido_paterno_usuario"], PDO::PARAM_STR);
+    $stmt->bindParam(":apellido_materno_usuario", $datos["apellido_materno_usuario"], PDO::PARAM_STR);
+    $stmt->bindParam(":email_usuario", $datos["email_usuario"], PDO::PARAM_STR);
+    $stmt->bindParam(":telefono_usuario", $datos["telefono_usuario"], PDO::PARAM_STR);
+    $stmt->bindParam(":password_usuario", $datos["password_usuario"], PDO::PARAM_STR);
+    $stmt->bindParam(":foto_usuario", $datos["foto_usuario"], PDO::PARAM_STR);
+    $stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        return "ok";
+    } else {
+        return "error";
+    }
+
+    $stmt = null;
+}
+
+
 
 
 	/*=============================================

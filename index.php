@@ -10,6 +10,7 @@ require_once "controllers/prendas.controller.php";
 require_once "controllers/colores.controller.php";
 require_once "controllers/lavados.controller.php";
 require_once "controllers/clientes.controller.php";
+require_once "controllers/ordenes.controller.php";
 
 require_once "models/user.model.php";
 require_once "models/proveedores.model.php";
@@ -20,6 +21,7 @@ require_once "models/prendas.model.php";
 require_once "models/colores.model.php";
 require_once "models/lavados.model.php";
 require_once "models/clientes.model.php";
+require_once "models/ordenes.model.php";
 
 
 $index = new TemplateController();

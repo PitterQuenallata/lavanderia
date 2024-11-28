@@ -1,7 +1,15 @@
 <?php
 class ControladorPrendas
 {
+    /*=============================================
+    MOSTRAR PRENDAS POR CATEGORÍA
+    =============================================*/
+    static public function ctrMostrarPrendasPorCategoria($item, $valor) {
+      $tabla = "prendas";
+      $respuesta = ModeloPrendas::mdlMostrarPrendasPorCategoria($tabla, $item, $valor);
 
+      return $respuesta;
+  }
   /*=============================================
   MOSTRAR PRENDAS
   =============================================*/

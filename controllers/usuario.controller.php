@@ -291,6 +291,23 @@ Crear Usuario
         }
     }
 
+/*=============================================
+CONTROLADOR PARA OBTENER USUARIO POR ID
+=============================================*/
+
+static public function ctrObtenerUsuarioPorId()
+{
+    if (isset($_SESSION["id_usuario"])) {
+        $tabla = "usuarios";
+        $id_usuario = $_SESSION["id_usuario"];
+
+        $respuesta = ModeloUsuarios::mdlObtenerUsuarioPorId($tabla, $id_usuario);
+
+        return $respuesta;
+    } else {
+        return null;
+    }
+}
 
 
     /*=============================================
@@ -456,6 +473,104 @@ Crear Usuario
             }
         }
     }
+
+
+/*=============================================
+CONTROLADOR PARA EDITAR PERFIL
+=============================================*/
+static public function ctrEditarPerfil()
+{
+    if (isset($_POST["editarNombrePerfil"])) {
+
+        if (
+            preg_match('/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["editarNombrePerfil"]) &&
+            preg_match('/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["editarApellidoPerfil"]) &&
+            preg_match('/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["editarApellidoMaternoPerfil"]) &&
+            preg_match('/^[0-9]+$/', $_POST["editarCelularPerfil"]) &&
+            filter_var($_POST["editarEmailPerfil"], FILTER_VALIDATE_EMAIL)
+        ) {
+
+            /*=============================================
+            VALIDAR IMAGEN
+            =============================================*/
+            $ruta = $_POST["fotoActualPerfil"];
+
+            if (isset($_FILES["editarFotoPerfil"]["tmp_name"]) && !empty($_FILES["editarFotoPerfil"]["tmp_name"])) {
+
+                list($ancho, $alto) = getimagesize($_FILES["editarFotoPerfil"]["tmp_name"]);
+                $nuevoAncho = 500;
+                $nuevoAlto = 500;
+
+                $directorio = "views/assets/media/avatars/usuarios/" . $_POST["editarUsuarioPerfil"];
+
+                if (!empty($_POST["fotoActualPerfil"])) {
+                    unlink($_POST["fotoActualPerfil"]);
+                } else {
+                    if (!file_exists($directorio)) {
+                        mkdir($directorio, 0755);
+                    }
+                }
+
+                $aleatorio = mt_rand(100, 999);
+                if ($_FILES["editarFotoPerfil"]["type"] == "image/jpeg") {
+                    $ruta = "$directorio/$aleatorio.jpg";
+                    $origen = imagecreatefromjpeg($_FILES["editarFotoPerfil"]["tmp_name"]);
+                    $destino = imagecreatetruecolor($nuevoAncho, $nuevoAlto);
+                    imagecopyresized($destino, $origen, 0, 0, 0, 0, $nuevoAncho, $nuevoAlto, $ancho, $alto);
+                    imagejpeg($destino, $ruta);
+                } else if ($_FILES["editarFotoPerfil"]["type"] == "image/png") {
+                    $ruta = "$directorio/$aleatorio.png";
+                    $origen = imagecreatefrompng($_FILES["editarFotoPerfil"]["tmp_name"]);
+                    $destino = imagecreatetruecolor($nuevoAncho, $nuevoAlto);
+                    imagecopyresized($destino, $origen, 0, 0, 0, 0, $nuevoAncho, $nuevoAlto, $ancho, $alto);
+                    imagepng($destino, $ruta);
+                }
+            }
+
+            /*=============================================
+            VALIDAR CONTRASEÑA
+            =============================================*/
+            $encriptar = !empty($_POST["editarPasswordPerfil"])
+                ? crypt($_POST["editarPasswordPerfil"], '$2a$07$azybxcags23425sdg23sdfhsd$')
+                : $_POST["passwordActualPerfil"];
+
+            /*=============================================
+            PREPARAR DATOS PARA EL MODELO
+            =============================================*/
+            $tabla = "usuarios";
+            $datos = array(
+                "id_usuario" => $_SESSION["id_usuario"],
+                "nombre_usuario" => mb_strtolower(trim($_POST["editarNombrePerfil"]), 'UTF-8'),
+                "apellido_paterno_usuario" => mb_strtolower(trim($_POST["editarApellidoPerfil"]), 'UTF-8'),
+                "apellido_materno_usuario" => mb_strtolower(trim($_POST["editarApellidoMaternoPerfil"]), 'UTF-8'),
+                "email_usuario" => $_POST["editarEmailPerfil"],
+                "telefono_usuario" => $_POST["editarCelularPerfil"],
+                "password_usuario" => $encriptar,
+                "foto_usuario" => $ruta
+            );
+
+            /*=============================================
+            LLAMAR AL MODELO
+            =============================================*/
+            $respuesta = ModeloUsuarios::mdlEditarPerfil($tabla, $datos);
+
+            if ($respuesta == "ok") {
+                echo '<script>
+                    fncSweetAlert("success", "El perfil ha sido actualizado correctamente", "perfil");
+                </script>';
+            } else {
+                echo '<script>
+                    fncSweetAlert("error", "¡Error al actualizar el perfil!");
+                </script>';
+            }
+        } else {
+            echo '<script>
+                fncSweetAlert("error", "¡Por favor, revise los datos ingresados!");
+            </script>';
+        }
+    }
+}
+
 
     /*=============================================
 	BORRAR USUARIO

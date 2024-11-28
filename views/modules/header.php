@@ -65,7 +65,7 @@
 					</div>
 
 					<!-- item-->
-					<a href="javascript:void(0);" class="dropdown-item notify-item">
+					<a href="perfil" class="dropdown-item notify-item">
 						<i data-lucide="user" class="font-size-16 me-2"></i>
 						<span>Mi cuenta</span>
 					</a>

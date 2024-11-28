@@ -1,3 +1,21 @@
+# Options All -Indexes
+# RewriteEngine On
+
+# # Si no es un archivo o directorio existente
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+
+# # Manejo de rutas dinámicas y permite parámetros GET
+# RewriteRule ^([-a-zA-Z0-9]+)$ index.php?ruta=$1 [QSA,L]
+
+
+
+
+
+
+
+
+
 Options All -Indexes
 RewriteEngine On
 
@@ -10,6 +28,14 @@ RewriteRule ^$ index.php?ruta=dashboard [QSA,L]
 
 # Maneja las rutas dinámicas y permite parámetros GET
 RewriteRule ^([-a-zA-Z0-9]+)$ index.php?ruta=$1 [QSA,L]
+
+
+
+
+
+
+
+
 
 # Options All -Indexes
 # RewriteEngine On

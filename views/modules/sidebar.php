@@ -5,7 +5,7 @@ $rolUsuario = $_SESSION["users"]["rol_usuario"] ?? null;
 $menuByRole = [
 	"administrador" => [
 		[
-			"title" => "Dashboard",
+			"title" => "Inicio",
 			"icon" => "airplay",
 			"link" => "dashboard"
 		],
@@ -61,24 +61,9 @@ $menuByRole = [
 			"link" => "clientes"
 		],
 		[
-			"title" => "Pagos",
-			"icon" => "dollar-sign",
-			"link" => "pagos"
-		],
-		[
 			"title" => "Reportes",
 			"icon" => "sidebar",
 			"link" => "reportes"
-		],
-		[
-			"title" => "Perfil",
-			"icon" => "settings ",
-			"link" => "perfil"
-		],
-		[
-			"title" => "Salir",
-			"icon" => "log-out",
-			"link" => "salir"
 		]
 	],
 	"promotor" => [
@@ -105,16 +90,6 @@ $menuByRole = [
 			"submenu" => [
 				["title" => "Lista de lavados", "link" => "lavados"],
 			]
-		],
-		[
-			"title" => "Perfil",
-			"icon" => "settings ",
-			"link" => "perfil"
-		],
-		[
-			"title" => "Salir",
-			"icon" => "log-out",
-			"link" => "salir"
 		]
 
 	],
@@ -133,21 +108,6 @@ $menuByRole = [
 			"submenu" => [
 				["title" => "Lista de lavados", "link" => "lavados"],
 			]
-		],
-		[
-			"title" => "Pagos",
-			"icon" => "dollar-sign",
-			"link" => "pagos"
-		],
-		[
-			"title" => "Perfil",
-			"icon" => "settings ",
-			"link" => "perfil"
-		],
-		[
-			"title" => "Salir",
-			"icon" => "log-out",
-			"link" => "salir"
 		]
 
 	]
@@ -175,40 +135,66 @@ $menuItems = $menuByRole[$rolUsuario] ?? [];
     <div data-simplebar>
         <ul class="app-menu">
             <li class="menu-title">Navegación</li>
-            <?php foreach ($menuItems as $item): ?>
-                <?php 
-                // Generar un ID único para los submenús
-                $menuId = preg_replace('/[^a-zA-Z0-9]/', '', $item['title']); 
-                ?>
-                <li class="menu-item">
-                    <?php if (isset($item['submenu'])): ?>
-                        <a href="#menu<?= $menuId ?>" data-bs-toggle="collapse" class="menu-link waves-effect">
-                            <span class="menu-icon"><i data-lucide="<?= $item['icon'] ?>"></i></span>
-                            <span class="menu-text"> <?= $item['title'] ?> </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-                        <div class="collapse" id="menu<?= $menuId ?>">
-                            <ul class="sub-menu">
-                                <?php foreach ($item['submenu'] as $subItem): ?>
-                                    <li class="menu-item">
-                                        <a href="<?= $subItem['link'] ?>" class="menu-link">
-                                            <span class="menu-text"><?= $subItem['title'] ?></span>
-                                        </a>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                    <?php else: ?>
-                        <a href="<?= $item['link'] ?>" class="menu-link waves-effect">
-                            <span class="menu-icon"><i data-lucide="<?= $item['icon'] ?>"></i></span>
-                            <span class="menu-text"> <?= $item['title'] ?> </span>
-                        </a>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
+
+            <?php
+            // Agrupar los elementos del menú en secciones
+            $sections = [
+                "Inicio" => array_filter($menuItems, fn($item) => $item['title'] === "Inicio"),
+                "Usuarios / Clientes" => array_filter($menuItems, fn($item) => in_array($item['title'], ["Usuarios", "Clientes"])),
+                "Ordenes y Servicios" => array_filter($menuItems, fn($item) => in_array($item['title'], ["Ordenes", "Prendas", "Servicios", "Pagos"])),
+                "Compras y Productos" => array_filter($menuItems, fn($item) => in_array($item['title'], ["Compras / Proveedores", "Productos"])),
+                "Reportes" => array_filter($menuItems, fn($item) => $item['title'] === "Reportes")
+            ];
+
+            // Renderizar las secciones y manejar las líneas divisorias dinámicamente
+            $firstSection = true; // Bandera para controlar la primera sección (sin línea antes)
+            foreach ($sections as $sectionName => $items) {
+                if (!empty($items)) { // Solo imprimir secciones con elementos
+                    if (!$firstSection) {
+                        // Imprimir línea divisoria antes de cada sección (excepto la primera)
+                        echo '<li class="menu-divider" style="list-style: none; margin: 0px 0;">
+                                <hr style="border: 2; height: 1px; background: #ddd;">
+                              </li>';
+                    }
+
+                    // Renderizar los elementos del menú en la sección actual
+                    foreach ($items as $item) {
+                        $menuId = preg_replace('/[^a-zA-Z0-9]/', '', $item['title']);
+                        echo '<li class="menu-item">';
+                        if (isset($item['submenu'])) {
+                            echo '<a href="#menu' . $menuId . '" data-bs-toggle="collapse" class="menu-link waves-effect">';
+                            echo '<span class="menu-icon"><i data-lucide="' . $item['icon'] . '"></i></span>';
+                            echo '<span class="menu-text"> ' . htmlspecialchars($item['title']) . ' </span>';
+                            echo '<span class="menu-arrow"></span></a>';
+                            echo '<div class="collapse" id="menu' . $menuId . '">';
+                            echo '<ul class="sub-menu">';
+                            foreach ($item['submenu'] as $subItem) {
+                                echo '<li class="menu-item">';
+                                echo '<a href="' . htmlspecialchars($subItem['link']) . '" class="menu-link">';
+                                echo '<span class="menu-text">' . htmlspecialchars($subItem['title']) . '</span>';
+                                echo '</a></li>';
+                            }
+                            echo '</ul></div>';
+                        } else {
+                            echo '<a href="' . htmlspecialchars($item['link']) . '" class="menu-link waves-effect">';
+                            echo '<span class="menu-icon"><i data-lucide="' . $item['icon'] . '"></i></span>';
+                            echo '<span class="menu-text"> ' . htmlspecialchars($item['title']) . ' </span>';
+                            echo '</a>';
+                        }
+                        echo '</li>';
+                    }
+
+                    // Marcar que la primera sección ya se procesó
+                    $firstSection = false;
+                }
+            }
+            ?>
         </ul>
     </div>
 </div>
+
+
+
 
 <script>
     // Asegúrate de que los menús colapsables se abren al primer clic

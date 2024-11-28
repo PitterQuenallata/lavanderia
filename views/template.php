@@ -20,6 +20,7 @@ if (isset($_SESSION["users"])) {
         "dashboard",
         "usuarios",
         "orden",
+        "preorden",
         "listOrden",
         "colores",
         "prendas",
@@ -44,6 +45,7 @@ if (isset($_SESSION["users"])) {
             "dashboard",
             "usuarios",
             "orden",
+            "preorden",
             "listOrden",
             "colores",
             "prendas",
@@ -62,6 +64,7 @@ if (isset($_SESSION["users"])) {
         ],
         "promotor" => [
             "orden",
+            "preorden",
             "listOrden",
             "colores",
             "prendas",
@@ -72,6 +75,7 @@ if (isset($_SESSION["users"])) {
         ],
         "secretaria" => [
             "orden",
+            "preorden",
             "listOrden",
             "lavados",
             "pagos",

@@ -5,6 +5,28 @@ class ModeloPrendas
 {
 
     /*=============================================
+    MOSTRAR PRENDAS POR CATEGORÍA
+    =============================================*/
+    static public function mdlMostrarPrendasPorCategoria($tabla, $item, $valor) {
+        $stmt = Conexion::conectar()->prepare("
+            SELECT 
+                p.id_prenda, 
+                p.descripcion_prenda, 
+                c.nombre_categoria_prenda
+            FROM $tabla AS p
+            INNER JOIN categorias_prendas AS c ON p.id_categoria_prenda = c.id_categoria_prenda
+            WHERE p.$item = :$item
+        ");
+
+        $stmt->bindParam(":".$item, $valor, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $stmt = null;
+    }
+    /*=============================================
     MOSTRAR PRENDAS
     =============================================*/
     static public function mdlMostrarPrendas($tabla, $tablaCategoria, $item, $valor)

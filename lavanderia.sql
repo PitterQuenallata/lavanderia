@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-11-2024 a las 03:26:57
+-- Tiempo de generación: 28-11-2024 a las 23:01:05
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -139,6 +139,27 @@ INSERT INTO `lavados` (`id_lavado`, `descripcion_lavado`, `tipo_lavado`, `costo_
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `metodo_pago`
+--
+
+CREATE TABLE `metodo_pago` (
+  `id_metodo_pago` int(11) NOT NULL,
+  `nombre` enum('QR','Efectivo') NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `metodo_pago`
+--
+
+INSERT INTO `metodo_pago` (`id_metodo_pago`, `nombre`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(1, 'QR', '2024-11-28 19:46:38', '2024-11-28 19:46:38'),
+(2, 'Efectivo', '2024-11-28 19:46:38', '2024-11-28 19:46:38');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ordenes`
 --
 
@@ -146,16 +167,23 @@ CREATE TABLE `ordenes` (
   `id_orden` int(11) NOT NULL,
   `id_cliente` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
-  `numero_orden` varchar(20) NOT NULL,
-  `peso_orden` decimal(10,2) DEFAULT NULL,
+  `id_pago` int(11) NOT NULL,
+  `numero_orden` text NOT NULL,
   `fecha_recepcion_orden` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_entrega_orden` timestamp NULL DEFAULT NULL,
-  `estado_orden` enum('pendiente','en proceso','completada','cancelada') NOT NULL DEFAULT 'pendiente',
-  `monto_orden` decimal(10,2) NOT NULL,
-  `comentario_orden` text DEFAULT NULL,
+  `estado_orden` int(11) NOT NULL DEFAULT 0,
+  `monto_total_orden` decimal(10,2) NOT NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ordenes`
+--
+
+INSERT INTO `ordenes` (`id_orden`, `id_cliente`, `id_usuario`, `id_pago`, `numero_orden`, `fecha_recepcion_orden`, `fecha_entrega_orden`, `estado_orden`, `monto_total_orden`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(14, 1, 1, 27, 'ORD-6748e62d57787', '2024-11-28 04:00:00', '2024-11-30 04:00:00', 0, 260.00, '2024-11-28 21:52:45', '2024-11-28 21:52:45'),
+(15, 1, 1, 28, 'ORD-6748e7e163c9b', '2024-11-28 04:00:00', '2024-11-27 04:00:00', 0, 200.00, '2024-11-28 22:00:01', '2024-11-28 22:00:01');
 
 -- --------------------------------------------------------
 
@@ -170,11 +198,51 @@ CREATE TABLE `ordenes_prendas` (
   `id_lavado` int(11) DEFAULT NULL,
   `cantidad` int(11) NOT NULL,
   `planchado` tinyint(1) DEFAULT 0,
-  `ojal` tinyint(1) DEFAULT 0,
-  `manualidad` tinyint(1) DEFAULT 0,
+  `ojal` int(5) DEFAULT NULL,
+  `manualidad` text DEFAULT NULL,
+  `observacion` text DEFAULT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `id_detalle` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ordenes_prendas`
+--
+
+INSERT INTO `ordenes_prendas` (`id_orden`, `id_prenda`, `id_color`, `id_lavado`, `cantidad`, `planchado`, `ojal`, `manualidad`, `observacion`, `fecha_creacion`, `fecha_actualizacion`, `id_detalle`) VALUES
+(14, 3, 2, 2, 3, 0, 2, 'sin doblar', NULL, '2024-11-28 21:52:45', '2024-11-28 21:52:45', 3),
+(14, 3, 2, 1, 20, 0, 3, 'sin doblar', NULL, '2024-11-28 21:52:45', '2024-11-28 21:52:45', 4),
+(15, 1, 2, 1, 20, 0, 5, 'No', NULL, '2024-11-28 22:00:01', '2024-11-28 22:00:01', 5);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pagos`
+--
+
+CREATE TABLE `pagos` (
+  `id_pago` int(11) NOT NULL,
+  `id_metodo_pago` int(11) NOT NULL,
+  `monto` decimal(10,2) NOT NULL,
+  `estado` enum('Pendiente','Completado','Cancelado') NOT NULL,
+  `estado_notificacion` enum('Enviado','No Enviado') DEFAULT 'No Enviado',
+  `detalle` text DEFAULT NULL,
+  `remitente_nombre` varchar(100) DEFAULT NULL,
+  `remitente_banco` varchar(100) DEFAULT NULL,
+  `remitente_documento` varchar(50) DEFAULT NULL,
+  `remitente_cuenta` varchar(50) DEFAULT NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pagos`
+--
+
+INSERT INTO `pagos` (`id_pago`, `id_metodo_pago`, `monto`, `estado`, `estado_notificacion`, `detalle`, `remitente_nombre`, `remitente_banco`, `remitente_documento`, `remitente_cuenta`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(27, 2, 4.00, 'Pendiente', 'No Enviado', 'Pago inicial de la orden', NULL, NULL, NULL, NULL, '2024-11-28 21:52:45', '2024-11-28 21:52:45'),
+(28, 2, 200.00, 'Completado', 'No Enviado', 'Pago inicial de la orden', NULL, NULL, NULL, NULL, '2024-11-28 22:00:01', '2024-11-28 22:00:01');
 
 -- --------------------------------------------------------
 
@@ -282,9 +350,8 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `apellido_paterno_usuario`, `apellido_materno_usuario`, `user_usuario`, `telefono_usuario`, `foto_usuario`, `email_usuario`, `password_usuario`, `estado_usuario`, `rol_usuario`, `ultimo_login_usuario`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 'juan', 'perez', 'gómez', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/772.jpg', 'juanperez@example.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-27 22:21:17', '2024-11-21 22:48:02', '2024-11-27 22:21:17'),
-(2, 'pitter', 'quenallata', 'quispe', 'pquenallata', '79128536', 'views/assets/media/avatars/usuarios/pquenallata/775.jpg', 'pquenallata@gmail.com', '$2a$07$azybxcags23425sdg23sdemfC0c36zEVPKLDMP7sTYYm6xar3895u', 1, 'promotor', '2024-11-27 03:14:20', '2024-11-22 16:46:34', '2024-11-27 03:14:20'),
-(5, 'elias', 'asdsa', 'sad', 'easdsa', '79128536', 'views/assets/media/avatars/usuarios/easdsa/520.jpg', 'elias@gmail.com', '$2a$07$azybxcags23425sdg23sdeBAye4G39Wsgtj8YdSAccHfHuxg4qGuu', 1, 'secretaria', NULL, '2024-11-27 12:02:04', '2024-11-27 12:57:26');
+(1, 'diegoa', 'muriela', 'colodroa', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/395.jpg', 'diego@email.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-28 16:21:29', '2024-11-21 22:48:02', '2024-11-28 16:21:29'),
+(2, 'pitter', 'quenallata', 'quispe', 'pquenallata', '79128536', 'views/assets/media/avatars/usuarios/pquenallata/775.jpg', 'pquenallata@gmail.com', '$2a$07$azybxcags23425sdg23sdemfC0c36zEVPKLDMP7sTYYm6xar3895u', 1, 'promotor', '2024-11-27 23:38:33', '2024-11-22 16:46:34', '2024-11-27 23:38:33');
 
 --
 -- Índices para tablas volcadas
@@ -321,20 +388,36 @@ ALTER TABLE `lavados`
   ADD PRIMARY KEY (`id_lavado`);
 
 --
+-- Indices de la tabla `metodo_pago`
+--
+ALTER TABLE `metodo_pago`
+  ADD PRIMARY KEY (`id_metodo_pago`);
+
+--
 -- Indices de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
   ADD PRIMARY KEY (`id_orden`),
-  ADD UNIQUE KEY `numero_orden` (`numero_orden`);
+  ADD KEY `fk_orden_cliente` (`id_cliente`),
+  ADD KEY `fk_orden_usuario` (`id_usuario`),
+  ADD KEY `fk_orden_pago` (`id_pago`);
 
 --
 -- Indices de la tabla `ordenes_prendas`
 --
 ALTER TABLE `ordenes_prendas`
-  ADD PRIMARY KEY (`id_orden`,`id_prenda`),
+  ADD PRIMARY KEY (`id_detalle`),
   ADD KEY `id_prenda` (`id_prenda`),
   ADD KEY `id_color` (`id_color`),
-  ADD KEY `id_lavado` (`id_lavado`);
+  ADD KEY `id_lavado` (`id_lavado`),
+  ADD KEY `fk_id_orden` (`id_orden`);
+
+--
+-- Indices de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD PRIMARY KEY (`id_pago`),
+  ADD KEY `fk_metodo_pago` (`id_metodo_pago`);
 
 --
 -- Indices de la tabla `prendas`
@@ -397,10 +480,28 @@ ALTER TABLE `lavados`
   MODIFY `id_lavado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT de la tabla `metodo_pago`
+--
+ALTER TABLE `metodo_pago`
+  MODIFY `id_metodo_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
-  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de la tabla `ordenes_prendas`
+--
+ALTER TABLE `ordenes_prendas`
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de la tabla `prendas`
@@ -431,13 +532,28 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- Filtros para la tabla `ordenes`
+--
+ALTER TABLE `ordenes`
+  ADD CONSTRAINT `fk_orden_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_orden_pago` FOREIGN KEY (`id_pago`) REFERENCES `pagos` (`id_pago`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_orden_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `ordenes_prendas`
 --
 ALTER TABLE `ordenes_prendas`
+  ADD CONSTRAINT `fk_id_orden` FOREIGN KEY (`id_orden`) REFERENCES `ordenes` (`id_orden`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `ordenes_prendas_ibfk_1` FOREIGN KEY (`id_orden`) REFERENCES `ordenes` (`id_orden`) ON DELETE CASCADE,
   ADD CONSTRAINT `ordenes_prendas_ibfk_2` FOREIGN KEY (`id_prenda`) REFERENCES `prendas` (`id_prenda`) ON DELETE CASCADE,
   ADD CONSTRAINT `ordenes_prendas_ibfk_3` FOREIGN KEY (`id_color`) REFERENCES `colores` (`id_color`) ON DELETE SET NULL,
   ADD CONSTRAINT `ordenes_prendas_ibfk_4` FOREIGN KEY (`id_lavado`) REFERENCES `lavados` (`id_lavado`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD CONSTRAINT `fk_metodo_pago` FOREIGN KEY (`id_metodo_pago`) REFERENCES `metodo_pago` (`id_metodo_pago`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `prendas`

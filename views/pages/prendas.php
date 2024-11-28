@@ -78,13 +78,8 @@
       </div>
       <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         <div class="modal-body p-4">
-          <div class="mb-3">
-            <label for="descripcion_prenda" class="form-label">Descripción</label>
-            <input type="text" class="form-control" id="descripcion_prenda" name="descripcion_prenda" oninput="validateJS(event,'text')" style="text-transform: uppercase;" required>
-            <div class="valid-feedback">Válido.</div>
-            <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
-          </div>
-          <div class="mb-3">
+
+        <div class="mb-3">
             <label for="categoria_prenda" class="form-label">Categoría</label>
             <select class="form-select" id="categoria_prenda" name="categoria_prenda" required>
               <option value="">Selecciona una categoría</option>
@@ -98,6 +93,13 @@
             <div class="valid-feedback">Válido.</div>
             <div class="invalid-feedback">Por favor selecciona una categoría.</div>
           </div>
+          <div class="mb-3">
+            <label for="descripcion_prenda" class="form-label">Prenda</label>
+            <input type="text" class="form-control" id="descripcion_prenda" name="descripcion_prenda" oninput="validateJS(event,'text')" style="text-transform: uppercase;" required>
+            <div class="valid-feedback">Válido.</div>
+            <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
+          </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Cerrar</button>
@@ -123,12 +125,7 @@
       <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         <div class="modal-body p-4">
           <input type="hidden" id="idPrenda" name="idPrenda">
-          <div class="mb-3">
-            <label for="editarDescripcionPrenda" class="form-label">Descripción</label>
-            <input type="text" class="form-control" id="editarDescripcionPrenda" name="editarDescripcionPrenda" oninput="validateJS(event,'text')" style="text-transform: uppercase;" required>
-            <div class="valid-feedback">Válido.</div>
-            <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
-          </div>
+
           <div class="mb-3">
             <label for="editarCategoriaPrenda" class="form-label">Categoría</label>
             <select class="form-select" id="editarCategoriaPrenda" name="editarCategoriaPrenda" required>
@@ -143,6 +140,14 @@
             <div class="valid-feedback">Válido.</div>
             <div class="invalid-feedback">Por favor selecciona una categoría.</div>
           </div>
+          
+          <div class="mb-3">
+            <label for="editarDescripcionPrenda" class="form-label">Descripción</label>
+            <input type="text" class="form-control" id="editarDescripcionPrenda" name="editarDescripcionPrenda" oninput="validateJS(event,'text')" style="text-transform: uppercase;" required>
+            <div class="valid-feedback">Válido.</div>
+            <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
+          </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Cerrar</button>
