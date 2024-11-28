@@ -122,4 +122,32 @@ return [
 ];
 
   }
+
+/*=============================================
+    MOSTRAR DETALLES DE UNA ORDEN
+    =============================================*/
+    public static function ctrMostrarDetallesOrden($idOrden) {
+      if (!empty($idOrden) && is_numeric($idOrden)) {
+          // Llamar al modelo para obtener los detalles de la orden
+          $detallesOrden = ModeloOrdenes::mdlMostrarDetallesOrden($idOrden);
+
+          if ($detallesOrden) {
+              return [
+                  "success" => true,
+                  "data" => $detallesOrden
+              ];
+          } else {
+              return [
+                  "success" => false,
+                  "message" => "Error al obtener los detalles de la orden. Verifica que el ID sea válido."
+              ];
+          }
+      } else {
+          return [
+              "success" => false,
+              "message" => "El ID de la orden es inválido o está vacío."
+          ];
+      }
+  }
+
 }

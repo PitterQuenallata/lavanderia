@@ -57,3 +57,4 @@
 <script src="views/assets/js/js/lavados.js"></script>
 <script src="views/assets/js/js/clientes.js"></script>
 <script src="views/assets/js/js/ordenes.js"></script>
+<script src="views/assets/js/js/listaOrdenes.js"></script>

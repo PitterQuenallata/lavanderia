@@ -151,7 +151,65 @@ public static function mdlMostrarOrdenes($tabla, $item, $valor)
             $link = null; // Cerrar conexión
         }
     }
+    /*=============================================
+MOSTRAR DETALLES ÓRDENES
+=============================================*/
+    public static function mdlMostrarDetallesOrden($idOrden) {
+        try {
+            $link = Conexion::conectar(); // Conexión a la base de datos
     
+            $stmt = $link->prepare("
+                SELECT 
+                    o.id_orden, 
+                    o.numero_orden, 
+                    o.fecha_recepcion_orden, 
+                    o.fecha_entrega_orden, 
+                    o.estado_orden, 
+                    o.monto_total_orden, 
+                    c.nombre_cliente, 
+                    c.apellido_cliente, 
+                    c.dni_cliente, 
+                    p.monto AS monto_pagado, 
+                    p.estado AS estado_pago, 
+                    m.nombre AS metodo_pago, 
+                    op.id_prenda, 
+                    pr.descripcion_prenda, 
+                    op.id_color, 
+                    col.nombre_color, 
+                    op.id_lavado, 
+                    lav.descripcion_lavado, 
+                    op.cantidad, 
+                    op.planchado, 
+                    op.ojal, 
+                    op.manualidad
+                FROM ordenes o
+                INNER JOIN clientes c ON o.id_cliente = c.id_cliente
+                INNER JOIN pagos p ON o.id_pago = p.id_pago
+                INNER JOIN metodo_pago m ON p.id_metodo_pago = m.id_metodo_pago
+                INNER JOIN ordenes_prendas op ON o.id_orden = op.id_orden
+                LEFT JOIN prendas pr ON op.id_prenda = pr.id_prenda
+                LEFT JOIN colores col ON op.id_color = col.id_color
+                LEFT JOIN lavados lav ON op.id_lavado = lav.id_lavado
+                WHERE o.id_orden = :idOrden
+            ");
+    
+            // Vincular el parámetro de la consulta
+            $stmt->bindParam(":idOrden", $idOrden, PDO::PARAM_INT);
+    
+            // Ejecutar la consulta
+            $stmt->execute();
+    
+            // Devolver los resultados en formato asociativo
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        } catch (Exception $e) {
+            // En caso de error, devolver false
+            return false;
+        } finally {
+            $stmt = null;
+            $link = null; // Cerrar conexión
+        }
+    }
     
 }
 
