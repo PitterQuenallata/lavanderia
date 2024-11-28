@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-11-2024 a las 15:17:24
+-- Tiempo de generación: 28-11-2024 a las 03:26:57
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -282,8 +282,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `apellido_paterno_usuario`, `apellido_materno_usuario`, `user_usuario`, `telefono_usuario`, `foto_usuario`, `email_usuario`, `password_usuario`, `estado_usuario`, `rol_usuario`, `ultimo_login_usuario`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 'juan', 'perez', 'gómez', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/772.jpg', 'juanperez@example.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-27 08:15:45', '2024-11-21 22:48:02', '2024-11-27 08:15:45'),
-(2, 'pitter', 'quenallata', 'quispe', 'pquenallata', '79128536', 'views/assets/media/avatars/usuarios/pquenallata/775.jpg', 'pquenallata@gmail.com', '$2a$07$azybxcags23425sdg23sdemfC0c36zEVPKLDMP7sTYYm6xar3895u', 1, 'promotor', '2024-11-27 03:14:20', '2024-11-22 16:46:34', '2024-11-27 03:14:20');
+(1, 'juan', 'perez', 'gómez', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/772.jpg', 'juanperez@example.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-27 22:21:17', '2024-11-21 22:48:02', '2024-11-27 22:21:17'),
+(2, 'pitter', 'quenallata', 'quispe', 'pquenallata', '79128536', 'views/assets/media/avatars/usuarios/pquenallata/775.jpg', 'pquenallata@gmail.com', '$2a$07$azybxcags23425sdg23sdemfC0c36zEVPKLDMP7sTYYm6xar3895u', 1, 'promotor', '2024-11-27 03:14:20', '2024-11-22 16:46:34', '2024-11-27 03:14:20'),
+(5, 'elias', 'asdsa', 'sad', 'easdsa', '79128536', 'views/assets/media/avatars/usuarios/easdsa/520.jpg', 'elias@gmail.com', '$2a$07$azybxcags23425sdg23sdeBAye4G39Wsgtj8YdSAccHfHuxg4qGuu', 1, 'secretaria', NULL, '2024-11-27 12:02:04', '2024-11-27 12:57:26');
 
 --
 -- Índices para tablas volcadas
@@ -423,7 +424,7 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
