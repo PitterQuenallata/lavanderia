@@ -1,78 +1,58 @@
 function validateJS(event, type) {
-  $(event.target).parent().addClass("was-validated");
+  const target = event.target;
+  const parent = $(target).parent();
+  let pattern;
+  let errorMessage = "";
 
-  if (type == "email") {
-    var pattern = /^[.a-zA-Z0-9_]+([.][.a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
-    if (!pattern.test(event.target.value)) {
-      $(event.target).parent().children(".invalid-feedback").html("El correo electrónico está mal escrito");
-      event.target.value = "";
+  // Determinar patrón y mensaje de error según el tipo
+  switch (type) {
+    case "email":
+      pattern = /^[.a-zA-Z0-9_]+([.][.a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
+      errorMessage = "El correo electrónico está mal escrito";
+      break;
+
+    case "text":
+      pattern = /^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,}$/;
+      errorMessage = "El campo solo debe llevar texto";
+      break;
+
+    case "password":
+      pattern = /^[*\\$\\!\\¡\\?\\¿\\.\\_\\#\\-\\0-9A-Za-z]{1,}$/;
+      errorMessage = "La contraseña no puede llevar ciertos caracteres especiales";
+      break;
+
+    case "complete":
+      pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\'\\#\\?\\¿\\!\\¡\\:\\,\\.\\/\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,}$/;
+      errorMessage = "La entrada tiene errores de caracteres especiales";
+      break;
+
+    case "decimal":
+      pattern = /^[0-9]+(\.[0-9]{1,2})?$/; // Permite números enteros y decimales con hasta dos cifras decimales
+      errorMessage = "Por favor ingrese un número válido con hasta dos decimales";
+      break;
+
+    case "integer":
+      pattern = /^[0-9]+$/; // Permite solo números enteros
+      errorMessage = "Por favor ingrese solo números enteros";
+      break;
+
+    case "phone":
+      pattern = /^[67][0-9]{7}$/; // Comienza con 6 o 7 y seguido por 7 dígitos
+      errorMessage = "Por favor ingrese un número de teléfono válido que comience con 6 o 7 y tenga 8 dígitos";
+      break;
+
+    default:
+      console.warn(`Tipo de validación desconocido: ${type}`);
       return;
-    }
   }
 
-  if (type == "text") {
-    var pattern = /^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,}$/;
-    if (!pattern.test(event.target.value)) {
-      $(event.target).parent().children(".invalid-feedback").html("El campo solo debe llevar texto");
-      event.target.value = "";
-      return;
-    } else {
-      // Llama a la función de verificación solo si la validación de texto es exitosa
-      if (event.target.id === "nuevoNombreRepuesto") {
-      
-      }
-    }
+  // Validar el campo
+  if (pattern && !pattern.test(target.value)) {
+    $(target).addClass("is-invalid").removeClass("is-valid");
+    parent.children(".invalid-feedback").html(errorMessage);
+  } else {
+    // Si es válido, eliminar clases de error y añadir las de éxito
+    $(target).removeClass("is-invalid").addClass("is-valid");
+    parent.children(".invalid-feedback").html("");
   }
-
-  if (type == "password") {
-    var pattern = /^[*\\$\\!\\¡\\?\\¿\\.\\_\\#\\-\\0-9A-Za-z]{1,}$/;
-    if (!pattern.test(event.target.value)) {
-      $(event.target).parent().children(".invalid-feedback").html("La contraseña no puede llevar ciertos caracteres especiales");
-      event.target.value = "";
-      return;
-    }
-  }
-
-  if (type == "complete") {
-    var pattern = /^[-\\(\\)\\=\\%\\&\\$\\;\\_\\*\\"\\'\\#\\?\\¿\\!\\¡\\:\\,\\.\\/\\0-9a-zA-ZñÑáéíóúÁÉÍÓÚ ]{1,}$/;
-    if (!pattern.test(event.target.value)) {
-      $(event.target).parent().children(".invalid-feedback").html("La entrada tiene errores de caracteres especiales");
-      event.target.value = "";
-      return;
-    } else {
-      // Llama a la función de verificación solo si la validación de texto es exitosa
-      if (event.target.id === "nuevoNombreRepuesto") {
-        verificarRepuesto(); // Esta función debe estar definida en repuestos.js
-      }
-    }
-  }
-
-  if (type == "decimal") {
-    var pattern = /^[0-9]+(\.[0-9]{1,2})?$/; // Permite números enteros y decimales con hasta dos cifras decimales
-    if (!pattern.test(event.target.value)) {
-      $(event.target).parent().children(".invalid-feedback").html("Por favor ingrese un número válido con hasta dos decimales");
-      event.target.value = "";
-      return;
-    }
-  }
-
-  if (type == "integer") {
-    var pattern = /^[0-9]+(\.[0-9]{1,2})?$/; // Permite números enteros y decimales con hasta dos cifras decimales
-    if (!pattern.test(event.target.value)) {
-      $(event.target).parent().children(".invalid-feedback").html("Por favor ingrese solo números");
-      event.target.value = "";
-      return;
-    }
-  }
-
-  if (type == "phone") {
-    var pattern = /^[67][0-9]{7}$/; // Comienza con 6 o 7 y seguido por 7 dígitos
-    if (!pattern.test(event.target.value)) {
-      $(event.target).parent().children(".invalid-feedback").html("Por favor ingrese un número de teléfono válido que comience con 6 o 7 y tenga 8 dígitos");
-      event.target.value = "";
-      return;
-    }
-  }
-
-  
 }

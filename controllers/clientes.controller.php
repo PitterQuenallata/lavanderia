@@ -17,23 +17,23 @@ class ControladorClientes
     =============================================*/
     static public function ctrCrearCliente()
     {
-        if (isset($_POST["nombre_cliente"])) {
+        if (isset($_POST["nuevoNombre"])) { // Actualizado el name del campo
             if (
-                preg_match('/^[A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["nombre_cliente"]) &&
-                preg_match('/^[A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["apellido_cliente"]) &&
-                preg_match('/^[67][0-9]{7}$/', $_POST["telefono_cliente"])
+                preg_match('/^[A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["nuevoNombre"]) &&
+                preg_match('/^[A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/', $_POST["nuevoApellido"]) &&
+                preg_match('/^[67][0-9]{7}$/', $_POST["nuevoTelefono"])
             ) {
                 $tabla = "clientes";
     
                 // Asignar valores NULL para los campos opcionales si están vacíos
-                $direccion = empty($_POST["direccion_cliente"]) ? null : $_POST["direccion_cliente"];
-                $email = empty($_POST["email_cliente"]) ? null : $_POST["email_cliente"];
-                $dni = empty($_POST["dni_cliente"]) ? null : $_POST["dni_cliente"];
+                $direccion = !empty($_POST["nuevaDireccion"]) ? $_POST["nuevaDireccion"] : null;
+                $email = !empty($_POST["nuevoEmail"]) ? $_POST["nuevoEmail"] : null;
+                $dni = !empty($_POST["nuevoDNI"]) ? $_POST["nuevoDNI"] : null;
     
                 $datos = array(
-                    "nombre_cliente" => $_POST["nombre_cliente"],
-                    "apellido_cliente" => $_POST["apellido_cliente"],
-                    "telefono_cliente" => $_POST["telefono_cliente"],
+                    "nombre_cliente" => $_POST["nuevoNombre"],
+                    "apellido_cliente" => $_POST["nuevoApellido"],
+                    "telefono_cliente" => $_POST["nuevoTelefono"],
                     "direccion_cliente" => $direccion,
                     "email_cliente" => $email,
                     "dni_cliente" => $dni,
@@ -44,19 +44,20 @@ class ControladorClientes
                 if ($respuesta == "ok") {
                     echo '<script>
                             fncSweetAlert("success", "El cliente ha sido agregado correctamente", "clientes");
-                        </script>';
+                          </script>';
                 } else {
                     echo '<script>
                             fncSweetAlert("error", "Error al agregar el cliente", "");
-                        </script>';
+                          </script>';
                 }
             } else {
                 echo '<script>
-                        fncSweetAlert("error", "¡Por favor llene los campos correctamente!");
-                    </script>';
+                        fncSweetAlert("error", "¡Por favor llene los campos correctamente!", "");
+                      </script>';
             }
         }
     }
+    
     
 
     /*=============================================

@@ -82,38 +82,50 @@
         <h4 class="modal-title">Agregar Cliente</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+
       <form method="post" class="needs-validation" novalidate>
         <div class="modal-body p-4">
+          <!-- Nombre -->
           <div class="mb-3">
-            <label for="nombre_cliente" class="form-label">Nombre <span class="text-danger">*</label>
-            <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" oninput="validateJS(event, 'text')" required style="text-transform: uppercase;">
+            <label for="nuevoNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nuevoNombre" name="nuevoNombre" oninput="validateJS(event, 'text')" required autocomplete="off" style="text-transform: uppercase;">
             <div class="valid-feedback">Válido.</div>
             <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
           </div>
+          <!-- Apellido -->
           <div class="mb-3">
-            <label for="apellido_cliente" class="form-label">Apellido <span class="text-danger">*</label>
-            <input type="text" class="form-control" id="apellido_cliente" name="apellido_cliente" oninput="validateJS(event, 'text')" required style="text-transform: uppercase;" > 
+            <label for="nuevoApellido" class="form-label">Apellido <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nuevoApellido" name="nuevoApellido" oninput="validateJS(event, 'text')" required autocomplete="off" style="text-transform: uppercase;">
             <div class="valid-feedback">Válido.</div>
             <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
           </div>
+          <!-- DNI -->
           <div class="mb-3">
-            <label for="telefono_cliente" class="form-label">Teléfono <span class="text-danger">*</label>
-            <input type="text" class="form-control" id="telefono_cliente" name="telefono_cliente" onchange="validateJS(event, 'phone')" required>
+            <label for="nuevoDNI" class="form-label">DNI <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nuevoDNI" name="nuevoDNI" required autocomplete="off" required>
             <div class="valid-feedback">Válido.</div>
             <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
           </div>
+          <!-- Teléfono -->
           <div class="mb-3">
-            <label for="direccion_cliente" class="form-label">Dirección</label>
-            <textarea class="form-control" id="direccion_cliente" name="direccion_cliente" rows="3"></textarea>
+            <label for="nuevoTelefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="nuevoTelefono" name="nuevoTelefono" oninput="validateJS(event, 'phone')" required autocomplete="off">
+            <div class="valid-feedback">Válido.</div>
+            <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
           </div>
+          <!-- Dirección -->
           <div class="mb-3">
-            <label for="email_cliente" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email_cliente" name="email_cliente" onchange="validateJS(event, 'email')">
+            <label for="nuevaDireccion" class="form-label">Dirección</label>
+            <textarea class="form-control" id="nuevaDireccion" name="nuevaDireccion" rows="3" oninput="validateJS(event, 'complete')" autocomplete="off"></textarea>
+            <div class="valid-feedback">Válido.</div>
+            <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
           </div>
+          <!-- Email -->
           <div class="mb-3">
-            <label for="dni_cliente" class="form-label">DNI</label>
-            <input type="text" class="form-control" id="dni_cliente" name="dni_cliente" maxlength="20">
-
+            <label for="nuevoEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="nuevoEmail" name="nuevoEmail" oninput="validateJS(event, 'email')" autocomplete="off">
+            <div class="valid-feedback">Válido.</div>
+            <div class="invalid-feedback">Por favor llena este campo correctamente.</div>
           </div>
         </div>
         <div class="modal-footer">
@@ -128,6 +140,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- Modal Editar -->
 <div id="modal-editar-cliente" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -161,8 +174,8 @@
             <input type="email" class="form-control" id="editarEmailCliente" name="editarEmailCliente" oninput="validateJS(event, 'email')">
           </div>
           <div class="mb-3">
-            <label for="editarDniCliente" class="form-label">DNI</label>
-            <input type="text" class="form-control" id="editarDniCliente" name="editarDniCliente" maxlength="20">
+            <label for="editarDniCliente" class="form-label">DNI <span class="text-danger">*</label>
+            <input type="text" class="form-control" id="editarDniCliente" name="editarDniCliente" maxlength="20" required>
           </div>
         </div>
         <div class="modal-footer">

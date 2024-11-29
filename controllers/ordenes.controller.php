@@ -96,14 +96,16 @@ class ControladorOrdenes
           "id_color" => $prenda["id_color"],
           "id_lavado" => $prenda["id_lavado"],
           "cantidad" => $prenda["cantidad"],
-          "planchado" => $prenda["planchado"],
+          // Convertir "Sí" a 1 y "No" a 0
+          "planchado" => $prenda["planchado"] === "Sí" ? 1 : 0,
           "ojal" => $prenda["ojal"],
+          "precio_total" => $prenda["total"],
           "manualidad" => $prenda["manualidad"],
       ];
-  
+      //var_dump($datosDetalle);
       // Guardar cada prenda por separado
       $respuestaDetalle = ModeloOrdenes::mdlGuardarDetallesPrendas($datosDetalle);
-      
+  
       if (!$respuestaDetalle) {
           // Si falla la inserción de alguna prenda, detener el proceso y devolver error
           return [
@@ -112,6 +114,7 @@ class ControladorOrdenes
           ];
       }
   }
+  
   
 
 // Si todo fue exitoso
