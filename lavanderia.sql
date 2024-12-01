@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-11-2024 a las 23:01:05
+-- Tiempo de generación: 01-12-2024 a las 09:24:31
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -167,12 +167,12 @@ CREATE TABLE `ordenes` (
   `id_orden` int(11) NOT NULL,
   `id_cliente` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
-  `id_pago` int(11) NOT NULL,
   `numero_orden` text NOT NULL,
   `fecha_recepcion_orden` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_entrega_orden` timestamp NULL DEFAULT NULL,
   `estado_orden` int(11) NOT NULL DEFAULT 0,
   `monto_total_orden` decimal(10,2) NOT NULL,
+  `estado_pago_orden` tinyint(4) NOT NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
   `fecha_actualizacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -181,9 +181,10 @@ CREATE TABLE `ordenes` (
 -- Volcado de datos para la tabla `ordenes`
 --
 
-INSERT INTO `ordenes` (`id_orden`, `id_cliente`, `id_usuario`, `id_pago`, `numero_orden`, `fecha_recepcion_orden`, `fecha_entrega_orden`, `estado_orden`, `monto_total_orden`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(14, 1, 1, 27, 'ORD-6748e62d57787', '2024-11-28 04:00:00', '2024-11-30 04:00:00', 0, 260.00, '2024-11-28 21:52:45', '2024-11-28 21:52:45'),
-(15, 1, 1, 28, 'ORD-6748e7e163c9b', '2024-11-28 04:00:00', '2024-11-27 04:00:00', 0, 200.00, '2024-11-28 22:00:01', '2024-11-28 22:00:01');
+INSERT INTO `ordenes` (`id_orden`, `id_cliente`, `id_usuario`, `numero_orden`, `fecha_recepcion_orden`, `fecha_entrega_orden`, `estado_orden`, `monto_total_orden`, `estado_pago_orden`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(33, 1, 1, 'ORD-674c127c5f9d2', '2024-12-01 04:00:00', '2024-12-07 04:00:00', 2, 1200.00, 1, '2024-12-01 07:38:36', '2024-12-01 07:40:02'),
+(34, 1, 1, 'ORD-674c13034abce', '2024-12-01 04:00:00', '2024-12-07 04:00:00', 2, 10.00, 1, '2024-12-01 07:40:51', '2024-12-01 08:08:05'),
+(35, 1, 1, 'ORD-674c199004c4b', '2024-12-01 04:00:00', '2024-12-07 04:00:00', 2, 40.00, 1, '2024-12-01 08:08:48', '2024-12-01 08:23:07');
 
 -- --------------------------------------------------------
 
@@ -197,7 +198,8 @@ CREATE TABLE `ordenes_prendas` (
   `id_color` int(11) DEFAULT NULL,
   `id_lavado` int(11) DEFAULT NULL,
   `cantidad` int(11) NOT NULL,
-  `planchado` tinyint(1) DEFAULT 0,
+  `total_precio_prenda` int(11) NOT NULL,
+  `planchado` tinyint(4) NOT NULL DEFAULT 0,
   `ojal` int(5) DEFAULT NULL,
   `manualidad` text DEFAULT NULL,
   `observacion` text DEFAULT NULL,
@@ -210,10 +212,11 @@ CREATE TABLE `ordenes_prendas` (
 -- Volcado de datos para la tabla `ordenes_prendas`
 --
 
-INSERT INTO `ordenes_prendas` (`id_orden`, `id_prenda`, `id_color`, `id_lavado`, `cantidad`, `planchado`, `ojal`, `manualidad`, `observacion`, `fecha_creacion`, `fecha_actualizacion`, `id_detalle`) VALUES
-(14, 3, 2, 2, 3, 0, 2, 'sin doblar', NULL, '2024-11-28 21:52:45', '2024-11-28 21:52:45', 3),
-(14, 3, 2, 1, 20, 0, 3, 'sin doblar', NULL, '2024-11-28 21:52:45', '2024-11-28 21:52:45', 4),
-(15, 1, 2, 1, 20, 0, 5, 'No', NULL, '2024-11-28 22:00:01', '2024-11-28 22:00:01', 5);
+INSERT INTO `ordenes_prendas` (`id_orden`, `id_prenda`, `id_color`, `id_lavado`, `cantidad`, `total_precio_prenda`, `planchado`, `ojal`, `manualidad`, `observacion`, `fecha_creacion`, `fecha_actualizacion`, `id_detalle`) VALUES
+(33, 1, 1, 1, 100, 1000, 1, 4, 'sin doblar', NULL, '2024-12-01 07:38:36', '2024-12-01 07:38:36', 24),
+(33, 3, 2, 2, 10, 200, 1, 0, 'No', NULL, '2024-12-01 07:38:36', '2024-12-01 07:38:36', 25),
+(34, 1, 1, 1, 1, 10, 0, 0, 'No', NULL, '2024-12-01 07:40:51', '2024-12-01 07:40:51', 26),
+(35, 3, 2, 2, 2, 40, 1, 0, 'No', NULL, '2024-12-01 08:08:48', '2024-12-01 08:08:48', 27);
 
 -- --------------------------------------------------------
 
@@ -224,6 +227,7 @@ INSERT INTO `ordenes_prendas` (`id_orden`, `id_prenda`, `id_color`, `id_lavado`,
 CREATE TABLE `pagos` (
   `id_pago` int(11) NOT NULL,
   `id_metodo_pago` int(11) NOT NULL,
+  `id_orden` int(11) NOT NULL,
   `monto` decimal(10,2) NOT NULL,
   `estado` enum('Pendiente','Completado','Cancelado') NOT NULL,
   `estado_notificacion` enum('Enviado','No Enviado') DEFAULT 'No Enviado',
@@ -240,9 +244,12 @@ CREATE TABLE `pagos` (
 -- Volcado de datos para la tabla `pagos`
 --
 
-INSERT INTO `pagos` (`id_pago`, `id_metodo_pago`, `monto`, `estado`, `estado_notificacion`, `detalle`, `remitente_nombre`, `remitente_banco`, `remitente_documento`, `remitente_cuenta`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(27, 2, 4.00, 'Pendiente', 'No Enviado', 'Pago inicial de la orden', NULL, NULL, NULL, NULL, '2024-11-28 21:52:45', '2024-11-28 21:52:45'),
-(28, 2, 200.00, 'Completado', 'No Enviado', 'Pago inicial de la orden', NULL, NULL, NULL, NULL, '2024-11-28 22:00:01', '2024-11-28 22:00:01');
+INSERT INTO `pagos` (`id_pago`, `id_metodo_pago`, `id_orden`, `monto`, `estado`, `estado_notificacion`, `detalle`, `remitente_nombre`, `remitente_banco`, `remitente_documento`, `remitente_cuenta`, `fecha_creacion`, `fecha_actualizacion`) VALUES
+(48, 2, 33, 1000.00, 'Completado', 'No Enviado', 'Pago inicial de la orden', NULL, NULL, NULL, NULL, '2024-12-01 07:38:36', '2024-12-01 07:38:36'),
+(49, 2, 33, 200.00, 'Completado', 'No Enviado', 'Pago pendiente de la orden', NULL, NULL, NULL, NULL, '2024-12-01 07:40:02', '2024-12-01 07:40:02'),
+(50, 2, 34, 10.00, 'Completado', 'No Enviado', 'Pago inicial de la orden', NULL, NULL, NULL, NULL, '2024-12-01 07:40:51', '2024-12-01 07:40:51'),
+(51, 2, 35, 20.00, 'Completado', 'No Enviado', 'Pago inicial de la orden', NULL, NULL, NULL, NULL, '2024-12-01 08:08:48', '2024-12-01 08:08:48'),
+(52, 2, 35, 20.00, 'Completado', 'No Enviado', 'Pago pendiente de la orden', NULL, NULL, NULL, NULL, '2024-12-01 08:23:06', '2024-12-01 08:23:06');
 
 -- --------------------------------------------------------
 
@@ -350,7 +357,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `apellido_paterno_usuario`, `apellido_materno_usuario`, `user_usuario`, `telefono_usuario`, `foto_usuario`, `email_usuario`, `password_usuario`, `estado_usuario`, `rol_usuario`, `ultimo_login_usuario`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 'diegoa', 'muriela', 'colodroa', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/395.jpg', 'diego@email.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-28 16:21:29', '2024-11-21 22:48:02', '2024-11-28 16:21:29'),
+(1, 'diegoa', 'muriela', 'colodroa', 'admin', '789456123', 'views/assets/media/avatars/usuarios/admin/395.jpg', 'diego@email.com', '$2a$07$azybxcags23425sdg23sde9Sczn9l3QeLCqG2x31FveZjFNtYBr9a', 1, 'administrador', '2024-11-30 23:16:49', '2024-11-21 22:48:02', '2024-11-30 23:16:49'),
 (2, 'pitter', 'quenallata', 'quispe', 'pquenallata', '79128536', 'views/assets/media/avatars/usuarios/pquenallata/775.jpg', 'pquenallata@gmail.com', '$2a$07$azybxcags23425sdg23sdemfC0c36zEVPKLDMP7sTYYm6xar3895u', 1, 'promotor', '2024-11-27 23:38:33', '2024-11-22 16:46:34', '2024-11-27 23:38:33');
 
 --
@@ -399,8 +406,7 @@ ALTER TABLE `metodo_pago`
 ALTER TABLE `ordenes`
   ADD PRIMARY KEY (`id_orden`),
   ADD KEY `fk_orden_cliente` (`id_cliente`),
-  ADD KEY `fk_orden_usuario` (`id_usuario`),
-  ADD KEY `fk_orden_pago` (`id_pago`);
+  ADD KEY `fk_orden_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `ordenes_prendas`
@@ -417,7 +423,8 @@ ALTER TABLE `ordenes_prendas`
 --
 ALTER TABLE `pagos`
   ADD PRIMARY KEY (`id_pago`),
-  ADD KEY `fk_metodo_pago` (`id_metodo_pago`);
+  ADD KEY `fk_metodo_pago` (`id_metodo_pago`),
+  ADD KEY `fk_pagos_ordenes` (`id_orden`);
 
 --
 -- Indices de la tabla `prendas`
@@ -465,7 +472,7 @@ ALTER TABLE `categorias_productos`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `colores`
@@ -489,19 +496,19 @@ ALTER TABLE `metodo_pago`
 -- AUTO_INCREMENT de la tabla `ordenes`
 --
 ALTER TABLE `ordenes`
-  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenes_prendas`
 --
 ALTER TABLE `ordenes_prendas`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT de la tabla `prendas`
@@ -536,7 +543,6 @@ ALTER TABLE `usuarios`
 --
 ALTER TABLE `ordenes`
   ADD CONSTRAINT `fk_orden_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_orden_pago` FOREIGN KEY (`id_pago`) REFERENCES `pagos` (`id_pago`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_orden_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -553,7 +559,8 @@ ALTER TABLE `ordenes_prendas`
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  ADD CONSTRAINT `fk_metodo_pago` FOREIGN KEY (`id_metodo_pago`) REFERENCES `metodo_pago` (`id_metodo_pago`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_metodo_pago` FOREIGN KEY (`id_metodo_pago`) REFERENCES `metodo_pago` (`id_metodo_pago`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pagos_ordenes` FOREIGN KEY (`id_orden`) REFERENCES `ordenes` (`id_orden`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `prendas`
