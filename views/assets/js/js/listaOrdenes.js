@@ -21,9 +21,9 @@ $(document).ready(function () {
                     $("#detalleFechaEntrega").text(orden.fecha_entrega_orden);
                     $("#detalleEstadoOrden").html(
                         orden.estado_orden === 0
-                            ? '<span class="badge bg-primary">Recepcionado</span>'
+                            ? '<span class="badge bg-primary">Recibido</span>'
                             : orden.estado_orden === 1
-                            ? '<span class="badge bg-info">En Proceso</span>'
+                            ? '<span class="badge bg-info">Listo para entregar</span>'
                             : '<span class="badge bg-success">Entregado</span>'
                     );
   
@@ -104,9 +104,9 @@ $(document).ready(function () {
                     // Mostrar el estado de la orden
                     $("#actualizarEstadoOrden").html(
                         orden.estado_orden === 0
-                            ? '<span class="badge bg-primary">Recepcionado</span>'
+                            ? '<span class="badge bg-primary">Recibido</span>'
                             : orden.estado_orden === 1
-                            ? '<span class="badge bg-info">En Proceso</span>'
+                            ? '<span class="badge bg-info">Listo para entregar</span>'
                             : '<span class="badge bg-success">Entregado</span>'
                     );
 
@@ -128,8 +128,8 @@ $(document).ready(function () {
 
                     // Llenar dinámicamente el select de estado de la orden
                     const estados = [
-                        { value: 0, label: "Recepcionado" },
-                        { value: 1, label: "En Proceso" },
+                        { value: 0, label: "Recibido" },
+                        { value: 1, label: "Listo para entregar" },
                         { value: 2, label: "Entregado" },
                     ];
 
@@ -212,14 +212,14 @@ $(document).ready(function () {
         console.log("Datos finales para actualizar la orden:", datosOrden);
 
         // Validación: No se puede marcar "Entregado" sin completar el pago
-        // const valEstadoPago = parseInt($("#estadoPagoValorNum").val(), 10);
+        const valEstadoPago = parseInt($("#estadoPagoValorNum").val(), 10);
         
-        // if (valEstadoPago === 0) {
-        //     if (datosOrden.estado_orden === 2 && !completarPago) {
-        //         alert("No puedes marcar la orden como 'Entregado' sin completar el pago.");
-        //         return; // Detener el proceso
-        //     }
-        // }
+        if (valEstadoPago === 0) {
+            if (datosOrden.estado_orden === 2 && !completarPago) {
+                alert("No puedes marcar la orden como 'Entregado' sin completar el pago.");
+                return; // Detener el proceso
+            }
+        }
 
 
         // Determinar la acción según los datos disponibles
@@ -231,7 +231,7 @@ $(document).ready(function () {
             action = "actualizarEstadoYPagarEfectivo";
             actualizarOrden(action, datosOrden);
         } else if (datosOrden.metodo_pago === 1) { // 1 = QR
-            generarQR(datosOrden); // Genera QR y maneja el pago
+            completarPagoQR(datosOrden); // Genera QR y maneja el pago
         }
     });
 
@@ -280,39 +280,97 @@ $(document).ready(function () {
         });
     }
 
-    // Función para manejar la lógica de generar QR
-    function generarQR(datosOrden) {
-        console.log("Generando QR para la orden:", datosOrden);
-        $.ajax({
-            url: "ajax/generarQR.ajax.php", // Ruta al script backend para generar QR
-            method: "POST",
-            data: datosOrden,
-            dataType: "json",
-            success: function (respuesta) {
-                if (respuesta.success) {
-                    alert("El QR fue generado correctamente. Escanee el QR para continuar.");
-                    
-                    // Simular escucha de escaneo exitoso (puedes implementar una lógica real aquí)
-                    setTimeout(function () {
-                        // Una vez pagado, llamar a guardar el pago QR
-                        guardarPagoQR(datosOrden);
-                    }, 5000); // Simula 5 segundos de espera para el pago
-                } else {
-                    alert(respuesta.message || "Error al generar el QR.");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error al generar el QR:", error);
-                alert("Ocurrió un error al intentar generar el QR.");
+
+// Función para manejar la lógica de generar QR
+function completarPagoQR(datosOrden) {
+    console.log("Generando QR para la orden:", datosOrden);
+
+    $.ajax({
+        url: "ajax/completarPagoQR.ajax.php", // Ruta al script backend para generar QR
+        method: "POST",
+        data: datosOrden,
+        dataType: "json",
+        success: function (respuesta) {
+            if (respuesta.success) {
+                alert("El QR fue generado correctamente. Escanee el QR para continuar.");
+              // Abrir TCPDF para generar el ticket con movimiento_id
+              if (respuesta.movimiento_id) {
+                window.open(`./extensiones/TCPDF-main/pdf/imprimirQR.php?movimientoId=${respuesta.movimiento_id}`, "_blank");
             }
-        });
+                // Una vez creado el QR, recargar la página para reflejar los cambios
+                location.reload();
+            } else {
+                alert(respuesta.message || "Error al generar el QR.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al generar el QR:", error);
+            alert("Ocurrió un error al intentar generar el QR.");
+        }
+    });
+}
+
+
+
+    
+// Evento click para el botón "Verificar Pago"
+$(document).on("click", ".btnVerificarPago", function () {
+    const movimientoId = $(this).data("movimiento-id"); // Obtener el movimiento_id del botón
+    const idOrden = $(this).data("id-orden"); // Obtener el id de la orden
+
+    if (!movimientoId) {
+        alert("No se encontró el movimiento_id para verificar el pago.");
+        return;
     }
 
-    // Función para manejar el pago QR y actualizar la orden
-    function guardarPagoQR(datosOrden) {
-        console.log("Guardando pago QR y actualizando estado:", datosOrden);
-        actualizarOrden("actualizarEstadoYPagarQR", datosOrden); // Llama a la acción específica
+    console.log("Iniciando verificación de pago para movimiento_id:", movimientoId);
+
+    // Realizar la verificación del estado del pago
+    $.ajax({
+        url: "ajax/verificarPago.ajax.php", // Archivo AJAX que redirige al controlador
+        method: "POST",
+        data: { 
+            movimiento_id: movimientoId,
+            id_orden: idOrden // Pasamos también el ID de la orden
+        },
+        dataType: "json",
+        success: function (respuesta) {
+            console.log("Respuesta del servidor (verificación):", respuesta);
+
+            if (respuesta.success) {
+                if (respuesta.estado === "Completado") {
+                    alert("¡Pago completado exitosamente!");
+                    window.location.reload(); // Recargar la página para reflejar los cambios
+                    // Actualizar el estado visualmente en la página (sin recargar)
+                    // $(`button[data-id-orden="${idOrden}"]`).closest("td").html(
+                    //     '<span class="badge bg-success">Pago Confirmado</span>'
+                    // );
+                } else if (respuesta.estado === "Pendiente") {
+                    alert("El pago aún está pendiente.");
+                }
+            } else {
+                alert("Error al verificar el estado del pago: " + respuesta.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error en la solicitud AJAX de verificación:", error);
+            alert("Error al verificar el estado del pago. Por favor, intenta nuevamente.");
+        },
+    });
+});
+// Evento click para el botón "Imprimir"
+$(document).on("click", ".btnImprimirOrden", function () {
+    const idOrden = $(this).data("id-orden"); // Obtener el ID de la orden
+
+    if (!idOrden) {
+        alert("No se encontró el ID de la orden para imprimir.");
+        return;
     }
 
+    console.log("Imprimiendo la orden con ID:", idOrden);
+
+    // Abrir la ventana de impresión
+    window.open(`./extensiones/TCPDF-main/pdf/comprobante.php?idOrden=${idOrden}`, "_blank");
+});
 
 });

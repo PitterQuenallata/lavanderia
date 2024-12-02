@@ -8,6 +8,7 @@ if (isset($_POST["id_orden"])) {
 
     // Llamar al controlador para obtener los datos
     $respuesta = ControladorOrdenes::ctrMostrarDetallesOrden($idOrden);
+    
 
     // Devolver la respuesta en formato JSON
     echo json_encode($respuesta);

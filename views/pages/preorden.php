@@ -26,6 +26,7 @@
               <li><strong>DNI:</strong> <span id="dni_cliente_pO"></span></li>
               <li><strong>Teléfono:</strong> <span id="telefono_cliente_pO"></span></li>
               <li><strong>Dirección:</strong> <span id="direccion_cliente_pO"></span></li>
+              <li><strong>Correo:</strong> <span id="email_cliente_pO"></span></li>
             </ul>
 
             <h5 class="card-title">Detalles de Prendas</h5>
@@ -102,21 +103,27 @@
 
 
 
-<!-- Modal para Generar QR -->
+<!-- Modal para Esperar Pago -->
 <div id="modalQr" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Generar Código QR</h4>
+        <h4 class="modal-title">Esperando Pago</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center">
-        <!-- Aquí se generará el QR dinámicamente -->
-        <p id="qrCodeMessage">Procesando el QR...</p>
-        <div id="qrCodeContainer"></div>
+        <!-- Mensaje de Espera -->
+        <p id="qrCodeMessage">Se ha generado un ticket con el QR. Espere el pago o verifíquelo manualmente.</p>
+        <!-- Indicador de Estado del Pago -->
+        <div id="paymentStatusMessage" class="alert alert-info d-none">
+          Verificando el estado del pago...
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      <div class="modal-footer justify-content-between">
+        <!-- Botón para verificar el pago -->
+        <button id="btnVerifyPayment" type="button" class="btn btn-primary">Verificar Pago</button>
+        <!-- Botón para cancelar el proceso -->
+        <button id="btnCancelPayment" type="button" class="btn btn-danger">Cancelar Pago QR</button>
       </div>
     </div>
   </div>

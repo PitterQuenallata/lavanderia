@@ -29,6 +29,7 @@ $(document).ready(function () {
       $("#dni_cliente_pO").text(datosOrdenGlobal.datos_generales.dni_cliente || "");
       $("#telefono_cliente_pO").text(datosOrdenGlobal.datos_generales.telefono_cliente || "");
       $("#direccion_cliente_pO").text(datosOrdenGlobal.datos_generales.direccion_cliente || "");
+      $("#email_cliente_pO").text(datosOrdenGlobal.datos_generales.correo_cliente || "");
 
       // Llenar la tabla de prendas
       const $tablaPreOrden = $("#tablaPreOrden_pO");
@@ -168,31 +169,53 @@ $(document).ready(function () {
     console.log("Datos finales para guardar la orden:", datosOrden);
 
     if (metodoPago === "qr") {
-      generarQR(datosOrden);
+      guardarOrdenQR(datosOrden);
     } else if (metodoPago === "efectivo") {
       guardarOrdenEfectivo(datosOrden);
     }
   });
 
-  // Modal QR configuración
-  $("#modalQr").modal({
-    backdrop: "static", // Evita que se cierre al hacer clic fuera
-    keyboard: false, // Evita que se cierre con "Esc"
+
+
+  
+
+// Guardar Orden con QR
+function guardarOrdenQR(datosOrden) {
+  console.log("Guardando orden con QR, datos:", datosOrden);
+
+  $.ajax({
+      url: "ajax/guardarOrdenQR.ajax.php", // Cambiar al endpoint que maneja QR
+      method: "POST",
+      data: { orden: JSON.stringify(datosOrden) }, // Enviar los datos de la orden
+      dataType: "json",
+      success: function (respuesta) {
+          console.log("Respuesta del servidor:", respuesta);
+          if (respuesta.success) {
+              alert("Orden guardada exitosamente.");
+              console.log("Movimiento ID:", respuesta.movimiento_id);
+
+              // Abrir TCPDF para generar el ticket con movimiento_id
+              if (respuesta.movimiento_id) {
+                  window.open(`./extensiones/TCPDF-main/pdf/imprimirQR.php?movimientoId=${respuesta.movimiento_id}`, "_blank");
+              }
+
+              // Redirigir directamente a la lista de órdenes
+              window.location.href = `./listOrden`;
+          } else {
+              alert("Error al guardar la orden con QR. Inténtalo nuevamente.");
+          }
+      },
+      error: function (xhr, status, error) {
+          console.error("Error en la solicitud AJAX:", error);
+          alert("Ocurrió un error al guardar la orden. Revisa la consola para más detalles.");
+      },
   });
+}
 
-  // Generar QR
-  function generarQR(datosOrden) {
-    console.log("Generando QR con los datos:", datosOrden);
 
-    $("#qrCodeMessage").text("Generando código QR...");
-    $("#modalQr").modal("show");
 
-    // Simular la generación de QR
-    setTimeout(() => {
-      $("#qrCodeMessage").text("Código QR generado correctamente.");
-      $("#qrCodeContainer").html("<img src='ruta_del_qr_generado' alt='QR'>");
-    }, 1000);
-  }
+
+
 
   // Guardar Orden en Efectivo
   function guardarOrdenEfectivo(datosOrden) {
@@ -237,7 +260,7 @@ $(document).ready(function () {
 
     // Usar los detalles de prendas directamente desde datosOrdenGlobal
     const detallesPrendas = datosOrdenGlobal.detalles_prendas;
-
+    console.log("Datos generales de la orden:", datosGenerales);
     return { datos_generales: datosGenerales, detalles_prendas: detallesPrendas };
   }
 });

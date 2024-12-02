@@ -294,6 +294,7 @@ $(document).ready(function () {
       apellido_cliente: apellidoCliente,
       telefono_cliente: $("#telefono_cliente").val(),
       direccion_cliente: $("#direccion_cliente").val(),
+      correo_cliente: $("#email_cliente").val(),
     };
     //console.log(datosGenerales);
     // Recopilar datos de las prendas

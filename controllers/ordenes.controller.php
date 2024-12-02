@@ -31,6 +31,34 @@ Guardar orden efectivo
     $datosGenerales = $datosOrden["datos_generales"];
     $detallesPrendas = $datosOrden["detalles_prendas"];
 
+    // Verificar si el cliente ya existe
+    // Verificar si el cliente ya existe
+    if (empty($datosGenerales["id_cliente"])) {
+      $clienteData = [
+        "nombre_cliente" => $datosGenerales["nombre_cliente"],
+        "apellido_cliente" => $datosGenerales["apellido_cliente"],
+        "telefono_cliente" => $datosGenerales["telefono_cliente"],
+        "direccion_cliente" => $datosGenerales["direccion_cliente"],
+        "email_cliente" => $datosGenerales["correo_cliente"],
+        "dni_cliente" => $datosGenerales["dni_cliente"]
+      ];
+
+      // Buscar o crear cliente y obtener el ID
+      $idCliente = ModeloOrdenes::mdlCrearClienteyRegresarId("clientes", $clienteData);
+
+      if (!$idCliente) {
+        return [
+          "success" => false,
+          "message" => "Error al registrar o buscar el cliente."
+        ];
+      }
+    } else {
+      $idCliente = $datosGenerales["id_cliente"];
+    }
+
+
+
+
     // Calcular el total de todas las prendas
     $totalPrendas = 0;
     foreach ($detallesPrendas as $prenda) {
@@ -44,11 +72,8 @@ Guardar orden efectivo
         "message" => "El monto pagado no puede ser mayor al total de las prendas."
       ];
     }
-    //var_dump($totalPrendas);
-    // var_dump($datosGenerales);
-    // var_dump($detallesPrendas);
+
     // Validar si la suma del monto pagado y pendiente no coincide con el total de las prendas
-    // Redondear ambos valores a dos decimales para comparación precisa
     if (round($datosGenerales["monto_pagado"] + $datosGenerales["monto_pendiente"], 2) !== round($totalPrendas, 2)) {
       return [
         "success" => false,
@@ -56,21 +81,20 @@ Guardar orden efectivo
       ];
     }
 
-
-    $datosOrden = [
-      "id_cliente" => (int) $datosGenerales["id_cliente"],
+    // Crear la orden
+    $datosOrdenInsert = [
+      "id_cliente" => (int) $idCliente,
       "id_usuario" => (int) $_SESSION["id_usuario"],
-      "numero_orden" => uniqid("ORD-"), // Genera un número único para la orden
+      "numero_orden" => uniqid("ORD-"), // Generar número único
       "fecha_recepcion" => date("Y-m-d"), // Fecha actual
       "fecha_entrega" => $datosGenerales["fecha_entrega"],
-      "monto_total_orden" => (float) $totalPrendas, // Asegurarse de que sea float
-      "estado_pago_orden" => $datosGenerales["monto_pendiente"] > 0 ? 0 : 1,
+      "monto_total_orden" => (float) $totalPrendas,
+      "estado_pago_orden" => $datosGenerales["monto_pendiente"] > 0 ? 0 : 1
     ];
-    //var_dump($datosOrden);
-    // Insertar la orden en la tabla `ordenes`
-    $idOrden = ModeloOrdenes::mdlGuardarOrden($datosOrden);
+    // var_dump($datosOrdenInsert);
 
-    // var_dump($idOrden);
+    $idOrden = ModeloOrdenes::mdlGuardarOrden($datosOrdenInsert);
+
     if (!$idOrden) {
       return [
         "success" => false,
@@ -78,56 +102,201 @@ Guardar orden efectivo
       ];
     }
 
-    // Insertar el pago en la tabla `pagos`
+    // Registrar el pago inicial
     $pagoData = [
-      "id_metodo_pago" => 2, // Por ejemplo, efectivo
-      "id_orden" => $idOrden, // ID de la orden asociada
+      "id_metodo_pago" => 2, // Efectivo
+      "id_orden" => $idOrden,
       "monto" => $datosGenerales["monto_pagado"],
       "detalle" => "Pago inicial de la orden",
       "estado" => "Completado"
-  ];
-  
-  if (!ModeloOrdenes::mdlGuardarPagoEfectivo($pagoData)) {
-      return [
-          "success" => false,
-          "message" => "Error al registrar el pago."
-      ];
-  }
-  
+    ];
 
+    if (!ModeloOrdenes::mdlGuardarPagoEfectivo($pagoData)) {
+      return [
+        "success" => false,
+        "message" => "Error al registrar el pago."
+      ];
+    }
+
+    // Guardar detalles de las prendas
     foreach ($detallesPrendas as $prenda) {
       $datosDetalle = [
-        "id_orden" => $idOrden, // ID de la orden generada
+        "id_orden" => $idOrden,
         "id_prenda" => $prenda["id_prenda"],
         "id_color" => $prenda["id_color"],
         "id_lavado" => $prenda["id_lavado"],
         "cantidad" => $prenda["cantidad"],
-        // Convertir "Sí" a 1 y "No" a 0
         "planchado" => $prenda["planchado"] === "Sí" ? 1 : 0,
         "ojal" => $prenda["ojal"],
         "precio_total" => $prenda["total"],
-        "manualidad" => $prenda["manualidad"],
+        "manualidad" => $prenda["manualidad"]
       ];
-      //var_dump($datosDetalle);
-      // Guardar cada prenda por separado
-      $respuestaDetalle = ModeloOrdenes::mdlGuardarDetallesPrendas($datosDetalle);
 
-      if (!$respuestaDetalle) {
-        // Si falla la inserción de alguna prenda, detener el proceso y devolver error
+      if (!ModeloOrdenes::mdlGuardarDetallesPrendas($datosDetalle)) {
         return [
           "success" => false,
           "message" => "Error al registrar los detalles de las prendas."
         ];
       }
     }
+
     // Si todo fue exitoso
     return [
       "success" => true,
       "message" => "Orden registrada correctamente.",
       "id_orden" => $idOrden,
+      "id_cliente" => $idCliente
     ];
   }
 
+
+  /*=============================================
+    Registrar orden con QR
+    =============================================*/
+  public static function ctrRegistrarOrdenConQR($datosOrden)
+  {
+    // Validar datos principales
+    if (
+      empty($datosOrden["datos_generales"]) ||
+      empty($datosOrden["detalles_prendas"])
+    ) {
+      return [
+        "success" => false,
+        "message" => "Faltan datos de la orden o de las prendas."
+      ];
+    }
+
+    $datosGenerales = $datosOrden["datos_generales"];
+    $detallesPrendas = $datosOrden["detalles_prendas"];
+
+    // Verificar si el cliente ya existe
+    if (empty($datosGenerales["id_cliente"])) {
+      $clienteData = [
+        "nombre_cliente" => $datosGenerales["nombre_cliente"],
+        "apellido_cliente" => $datosGenerales["apellido_cliente"],
+        "telefono_cliente" => $datosGenerales["telefono_cliente"],
+        "direccion_cliente" => $datosGenerales["direccion_cliente"],
+        "email_cliente" => $datosGenerales["correo_cliente"],
+        "dni_cliente" => $datosGenerales["dni_cliente"]
+      ];
+
+      // Buscar o crear cliente y obtener el ID
+      $idCliente = ModeloOrdenes::mdlCrearClienteyRegresarId("clientes", $clienteData);
+
+      if (!$idCliente) {
+        return [
+          "success" => false,
+          "message" => "Error al registrar o buscar el cliente."
+        ];
+      }
+    } else {
+      $idCliente = $datosGenerales["id_cliente"];
+    }
+
+    // Calcular el total de todas las prendas
+    $totalPrendas = 0;
+    foreach ($detallesPrendas as $prenda) {
+      $totalPrendas += floatval($prenda["total"]);
+    }
+
+    // Validar montos
+    if ($datosGenerales["monto_pagado"] > $totalPrendas) {
+      return [
+        "success" => false,
+        "message" => "El monto pagado no puede ser mayor al total de las prendas."
+      ];
+    }
+
+    if (round($datosGenerales["monto_pagado"] + $datosGenerales["monto_pendiente"], 2) !== round($totalPrendas, 2)) {
+      return [
+        "success" => false,
+        "message" => "La suma del monto pagado y el monto pendiente no coincide con el total de las prendas."
+      ];
+    }
+
+    // Crear la orden con estado de pago pendiente
+    $datosOrdenInsert = [
+      "id_cliente" => (int) $idCliente,
+      "id_usuario" => (int) $_SESSION["id_usuario"],
+      "numero_orden" => uniqid("ORD-"),
+      "fecha_recepcion" => date("Y-m-d"),
+      "fecha_entrega" => $datosGenerales["fecha_entrega"],
+      "monto_total_orden" => (float) $totalPrendas,
+      "estado_pago_orden" => 0 // Siempre pendiente inicialmente
+    ];
+
+    $idOrden = ModeloOrdenes::mdlGuardarOrden($datosOrdenInsert);
+
+    if (!$idOrden) {
+      return [
+        "success" => false,
+        "message" => "Error al registrar la orden."
+      ];
+    }
+
+    // Generar QR mediante la API (sin detalle personalizado)
+    $qrResponse = ControladorAPI::ctrGenerarQR($datosGenerales["monto_pagado"], "0/00:15", true);
+    //var_dump($qrResponse);
+
+    if (!$qrResponse["success"]) {
+      return [
+        "success" => false,
+        "message" => "Error al generar el QR: " . $qrResponse["message"]
+      ];
+    }
+
+    // Guardar detalles de las prendas
+    foreach ($detallesPrendas as $prenda) {
+      $datosDetalle = [
+        "id_orden" => $idOrden,
+        "id_prenda" => $prenda["id_prenda"],
+        "id_color" => $prenda["id_color"],
+        "id_lavado" => $prenda["id_lavado"],
+        "cantidad" => $prenda["cantidad"],
+        "planchado" => $prenda["planchado"] === "Sí" ? 1 : 0,
+        "ojal" => $prenda["ojal"],
+        "precio_total" => $prenda["total"],
+        "manualidad" => $prenda["manualidad"]
+      ];
+
+      if (!ModeloOrdenes::mdlGuardarDetallesPrendas($datosDetalle)) {
+        return [
+          "success" => false,
+          "message" => "Error al registrar los detalles de las prendas."
+        ];
+      }
+    }
+
+    // Registrar el pago con QR (al final del proceso)
+    $pagoData = [
+      "id_metodo_pago" => 1, // QR
+      "id_orden" => (int) $idOrden, // Asegurarse de que sea un entero
+      "monto" => $datosGenerales["monto_pagado"],
+      "detalle" => "Pago con QR para la orden",
+      "estado" => "Pendiente",
+      "qr_base64" => $qrResponse["qr"], // QR generado
+      "movimiento_id" => $qrResponse["movimiento_id"]
+    ];
+    //var_dump($qrResponse["movimiento_id"]);
+    //var_dump($pagoData);
+    $guardarPago = ModeloOrdenes::mdlGuardarPagoQR($pagoData);
+    //var_dump($guardarPago);
+    if (!$guardarPago) {
+      return [
+        "success" => false,
+        "message" => "Error al registrar el pago con QR."
+      ];
+    }
+
+
+
+    // Retornar éxito junto con el movimiento_id
+    return [
+      "success" => true,
+      "message" => "Orden registrada correctamente.",
+      "movimiento_id" => $qrResponse["movimiento_id"] // Retornar el movimiento_id
+    ];
+  }
 
   /*=============================================
     MOSTRAR DETALLES DE UNA ORDEN
@@ -192,71 +361,71 @@ Guardar orden efectivo
   }
 
 
-/*=============================================
+  /*=============================================
 Actualizar Estado Y Pagar Efectivo
 =============================================*/
-public static function ctrActualizarEstadoYPagarEfectivo($datosOrden)
-{
+  public static function ctrActualizarEstadoYPagarEfectivo($datosOrden)
+  {
     // Validar los datos obligatorios
     if (
-        empty($datosOrden["id_orden"]) ||
-        empty($datosOrden["monto_completar"]) ||
-        empty($datosOrden["metodo_pago"])
+      empty($datosOrden["id_orden"]) ||
+      empty($datosOrden["monto_completar"]) ||
+      empty($datosOrden["metodo_pago"])
     ) {
-        return [
-            "success" => false,
-            "message" => "Faltan datos obligatorios para registrar el pago en efectivo."
-        ];
+      return [
+        "success" => false,
+        "message" => "Faltan datos obligatorios para registrar el pago en efectivo."
+      ];
     }
 
     // Registrar el pago en efectivo
     $pagoData = [
-        "id_orden" => $datosOrden["id_orden"],
-        "id_metodo_pago" => 2, // Método de pago efectivo
-        "monto" => $datosOrden["monto_completar"],
-        "detalle" => "Pago pendiente de la orden",
-        "estado" => "Completado"
+      "id_orden" => $datosOrden["id_orden"],
+      "id_metodo_pago" => 2, // Método de pago efectivo
+      "monto" => $datosOrden["monto_completar"],
+      "detalle" => "Pago pendiente de la orden",
+      "estado" => "Completado"
     ];
 
     $idPago = ModeloOrdenes::mdlGuardarPagoEfectivo($pagoData);
 
     if (!$idPago) {
-        return [
-            "success" => false,
-            "message" => "Error al registrar el pago en efectivo."
-        ];
+      return [
+        "success" => false,
+        "message" => "Error al registrar el pago en efectivo."
+      ];
     }
 
     // Verificar si se debe actualizar el estado de la orden
     if (!is_null($datosOrden["estado_orden"])) {
-        $actualizarEstado = ModeloOrdenes::mdlActualizarEstadoOrden($datosOrden["id_orden"], $datosOrden["estado_orden"]);
+      $actualizarEstado = ModeloOrdenes::mdlActualizarEstadoOrden($datosOrden["id_orden"], $datosOrden["estado_orden"]);
 
-        if (!$actualizarEstado) {
-            return [
-                "success" => false,
-                "message" => "Error al actualizar el estado de la orden."
-            ];
-        }
+      if (!$actualizarEstado) {
+        return [
+          "success" => false,
+          "message" => "Error al actualizar el estado de la orden."
+        ];
+      }
     }
 
     // Obtener los detalles de la orden para calcular el estado de pago
     $detallesOrden = ModeloOrdenes::mdlMostrarDetallesOrden($datosOrden["id_orden"]);
 
     if (!$detallesOrden) {
-        return [
-            "success" => false,
-            "message" => "No se encontraron los detalles de la orden especificada."
-        ];
+      return [
+        "success" => false,
+        "message" => "No se encontraron los detalles de la orden especificada."
+      ];
     }
 
     // Calcular la suma de los pagos realizados
     $sumaPagos = ModeloOrdenes::mdlControlPagos($datosOrden["id_orden"]);
 
     if ($sumaPagos === false) {
-        return [
-            "success" => false,
-            "message" => "Error al calcular la suma de los pagos."
-        ];
+      return [
+        "success" => false,
+        "message" => "Error al calcular la suma de los pagos."
+      ];
     }
 
     // Obtener el monto total de la orden
@@ -269,19 +438,16 @@ public static function ctrActualizarEstadoYPagarEfectivo($datosOrden)
     $actualizarEstadoPago = ModeloOrdenes::mdlActualizarEstadoPagoOrden($datosOrden["id_orden"], $estadoPago);
 
     if (!$actualizarEstadoPago) {
-        return [
-            "success" => false,
-            "message" => "Error al actualizar el estado de pago de la orden."
-        ];
+      return [
+        "success" => false,
+        "message" => "Error al actualizar el estado de pago de la orden."
+      ];
     }
 
     // Si todo fue exitoso
     return [
-        "success" => true,
-        "message" => "El pago en efectivo se registró correctamente. El estado de la orden y el estado de pago se actualizaron correctamente."
+      "success" => true,
+      "message" => "El pago en efectivo se registró correctamente. El estado de la orden y el estado de pago se actualizaron correctamente."
     ];
-}
-
-
-
+  }
 }
